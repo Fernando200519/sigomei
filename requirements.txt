@@ -1,0 +1,9 @@
+# Servidor
+Pyro5>=5.14
+psycopg2-binary>=2.9.9
+
+# Interfaz gráfica
+PyQt6>=6.6.0
+
+# Pruebas
+pytest>=7.0
