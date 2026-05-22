@@ -11,7 +11,7 @@ load_dotenv(dotenv_path=_ROOT / ".env")
 
 HOST      = os.getenv("SERVER_HOST")
 PORT      = int(os.getenv("SERVER_PORT"))
-OBJECT_ID = "sigomei.controller"
+OBJECT_ID = os.getenv("SERVER_OBJECT_ID")
 
 _LOGS_DIR = _ROOT / "logs"
 _LOGS_DIR.mkdir(exist_ok=True)

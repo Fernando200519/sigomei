@@ -1,155 +1,201 @@
-# SIGOMEI — Sistema de Gestión de Órdenes de Mantenimiento de Equipos Industriales
+# SIGOMEI — Sistema Distribuido para la Gestión de Órdenes de Mantenimiento de Equipos Industriales
 
-## ¿Qué contiene este repositorio?
+## Requisitos previos
 
-```
-sigomei/
-├── README.md
-├── requirements.txt
-├── server/
-│   ├── auth/           ← AuthManager y SessionHandler
-│   ├── controller/     ← ISigomeiController (fachada Pyro5)
-│   ├── service/        ← EquipoService, TecnicoService, OrdenService
-│   ├── dao/            ← EquipoDAO, TecnicoDAO, OrdenDAO
-│   └── exceptions/     ← Excepciones personalizadas del dominio
-├── client/
-│   ├── proxy/          ← SigomeiProxy (stub del cliente)
-│   └── gui/            ← MainWindow (PyQt6)
-└── tests/
-    ├── conftest.py
-    └── services/       ← 8 archivos de prueba, uno por regla RN-01..RN-08
-```
+Antes de comenzar, asegúrate de tener instalado lo siguiente en tu equipo:
 
-> **Estado actual:** todos los métodos del servidor lanzan `NotImplementedError`.
-> Las 26 pruebas deben **fallar en rojo** — ese es el comportamiento esperado en esta entrega.
+| Herramienta    | Versión mínima  |
+| -------------- | --------------- |
+| **Python**     | 3.11 o superior |
+| **PostgreSQL** | 14 o superior   |
+| **pip**        | 23 o superior   |
 
 ---
 
-## Paso 1 — Clonar el repositorio
+## 1. Clonar el repositorio y preparar el entorno
+
+Clona el proyecto (o descomprime el archivo .zip) y navega a la raíz del directorio:
 
 ```bash
 git clone https://github.com/Fernando200519/sigomei.git
 cd sigomei
 ```
 
-> Si recibió el proyecto como archivo `.zip`, descomprímalo y abra una terminal dentro de la carpeta resultante (`cd sigomei`).
-
----
-
-## Paso 2 — Crear y activar un entorno virtual
-
-Crear el entorno virtual dentro de la carpeta del proyecto:
+### Crear y activar el entorno virtual
 
 ```bash
+# Crear el entorno virtual
 python -m venv .venv
-```
 
-Activarlo según el sistema operativo:
-
-```bash
-# macOS / Linux
-source .venv/bin/activate
-
-# Windows (PowerShell)
+# Activar en Windows (PowerShell)
 .venv\Scripts\Activate.ps1
 
-# Windows (CMD)
-.venv\Scripts\activate.bat
+# Activar en macOS / Linux
+source .venv/bin/activate
 ```
 
-Debe aparecer el prefijo `(.venv)` al inicio de la línea de comandos.  
-Para desactivar el entorno en cualquier momento: `deactivate`
+_Sabrás que está activo porque verás el prefijo (.venv) en tu terminal._
 
----
-
-## Paso 3 — Instalar las dependencias
+### Instalar dependencias
 
 ```bash
 pip install -r requirements.txt
 ```
 
-El archivo instala exactamente cuatro paquetes principales:
+---
 
-| Paquete           | Para qué se usa                                                       |
-| ----------------- | --------------------------------------------------------------------- |
-| `Pyro5`           | Comunicación RMI entre cliente y servidor                             |
-| `PyQt6`           | Interfaz gráfica (no se usa en las pruebas)                           |
-| `psycopg2-binary` | Conector PostgreSQL (no se usa en las pruebas)                        |
-| `pytest`          | Framework de pruebas unitarias ← **el más importante para esta fase** |
+## 2. Configurar credenciales (Archivo .env)
 
-Verificar que pytest quedó instalado:
+El proyecto **nunca** guarda contraseñas embebidas en el código. Las credenciales de red y base de datos se manejan mediante un archivo externo.
+
+Crea tu archivo de configuración a partir de la plantilla:
 
 ```bash
-pytest --version
+cp .env.example .env
 ```
 
-Salida esperada en consola: Algo como `pytest 8.x.x` o `pytest 9.x.x`.
+Abre el archivo `.env` recién creado en tu editor y configura tus datos reales:
+
+```ini
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=sigomei_db
+DB_USER=postgres
+DB_PASSWORD=tu_contraseña_real
+
+SERVER_HOST=localhost
+SERVER_PORT=9090
+SERVER_OBJECT_ID=sigomei.controller
+```
+
+> ⚠️ **Nota de seguridad:** El archivo `.env` está incluido en el `.gitignore` por lo que jamás se subirá al repositorio remoto.
 
 ---
 
-## Paso 4 — Ejecutar la suite de pruebas (Fase ROJA)
+## 3. Configurar la base de datos PostgreSQL
 
-Desde la raíz del proyecto (la carpeta que contiene `requirements.txt`):
+Asegúrate de que tu servicio de PostgreSQL esté corriendo y ejecuta los siguientes comandos en tu terminal para preparar el esquema y los datos iniciales:
+
+### 3.1 Crear la base de datos
+
+```bash
+psql -U postgres -c "CREATE DATABASE sigomei_db;"
+```
+
+### 3.2 Crear las tablas (Esquema)
+
+```bash
+psql -U postgres -d sigomei_db -f database/schema.sql
+```
+
+### 3.3 Cargar datos de prueba iniciales (Seeding)
+
+```bash
+psql -U postgres -d sigomei_db -f database/seed.sql
+```
+
+### 3.4 Verificar la carga
+
+```bash
+psql -U postgres -d sigomei_db -c "SELECT * FROM equipos;"
+```
+
+_Si todo salió bien, la consola te mostrará una tabla con los 6 equipos de prueba iniciales._
+
+---
+
+## 4. Ejecutar la suite de pruebas (Ciclo TDD en VERDE)
+
+Con el entorno virtual activo y desde la raíz del proyecto, ejecuta pytest. Como la lógica ya ha sido implementada, **todas las pruebas deben pasar exitosamente**.
 
 ```bash
 pytest tests/ -v
 ```
 
-La bandera `-v` (verbose) muestra el nombre de cada prueba junto a su resultado.
+> 💡 **Nota:** Las pruebas unitarias de los servicios utilizan _mocks_ (simuladores), lo que significa que puedes ejecutarlas y pasarán a verde incluso si el servidor o la base de datos están completamente apagados.
+
+Salida esperada al final de la consola:
+
+```text
+============================== 26 passed in 0.xx s ==============================
+```
 
 ---
 
-## Paso 5 — Interpretar la salida esperada
+## 5. Arrancar el servidor
 
-Al terminar, la consola debe mostrar **exactamente esto** al final:
-
-```
-============================== 26 failed in 0.xx s ==============================
-```
-
-Con el detalle de todos los tests en rojo:
-
-```
-FAILED tests/services/test_rn01_especialidad.py::...
-FAILED tests/services/test_rn02_orden_activa_duplicada.py::...
-FAILED tests/services/test_rn03_tecnico_inactivo.py::...
-FAILED tests/services/test_rn04_integridad_referencial.py::...
-FAILED tests/services/test_rn05_fechas_coherentes.py::...
-FAILED tests/services/test_rn06_campos_estado_finalizada.py::...
-FAILED tests/services/test_rn07_criticidad_alta.py::...
-FAILED tests/services/test_rn08_transiciones_estado.py::...
-```
-
-Cada fallo termina con `NotImplementedError` — esto es **correcto y esperado**.  
-No debe haber ningún `ERROR` de importación ni de sintaxis. Solo `FAILED`.
-
----
-
-## Qué prueba cada archivo
-
-| Archivo de prueba                       | Regla de negocio evaluada                                                                                          |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `test_rn01_especialidad.py`             | **RN-01** La especialidad del técnico debe coincidir con el tipo del equipo                                        |
-| `test_rn02_orden_activa_duplicada.py`   | **RN-02** Un equipo no puede tener dos órdenes activas en la misma fecha                                           |
-| `test_rn03_tecnico_inactivo.py`         | **RN-03** Un técnico inactivo no puede ser asignado a una orden                                                    |
-| `test_rn04_integridad_referencial.py`   | **RN-04** No se permite eliminar equipos o técnicos con órdenes registradas                                        |
-| `test_rn05_fechas_coherentes.py`        | **RN-05** fecha_cierre ≥ fecha_inicio ≥ fecha_programada                                                           |
-| `test_rn06_campos_estado_finalizada.py` | **RN-06** Solo órdenes Finalizadas tienen costo_real y fecha_cierre                                                |
-| `test_rn07_criticidad_alta.py`          | **RN-07** Equipos de criticidad Alta requieren técnico con certificación II o III                                  |
-| `test_rn08_transiciones_estado.py`      | **RN-08** Transiciones válidas: Programada→En ejecución→Finalizada; Cancelada solo desde Programada o En ejecución |
-
----
-
-## Comando rápido (todo en una línea)
-
-Para ejecutar las pruebas con un resumen compacto sin el detalle de cada fallo:
+Para encender el motor del sistema y exponer los objetos remotos a la red, ejecuta:
 
 ```bash
-pytest tests/ --tb=no -q
+python -m server.main_server
 ```
 
-Salida esperada:
+**Salida esperada en consola:**
+
+```text
+2026-05-22 10:00:00  INFO      sigomei.server — Iniciando servidor SIGOMEI…
+2026-05-22 10:00:00  INFO      sigomei.server — Archivo de bitácora: logs/sigomei_20260522_100000.log
+2026-05-22 10:00:00  INFO      sigomei.server — Controlador registrado → PYRO:sigomei.controller@localhost:9090
+2026-05-22 10:00:00  INFO      sigomei.server — Esperando peticiones en localhost:9090 …
+```
+
+- El servidor se quedará escuchando de forma indefinida. Generará un archivo log en tiempo real dentro de la carpeta `/logs`.
+- Para detener el servidor de forma segura, presiona `Ctrl + C`.
+
+---
+
+## 6. Arrancar el cliente (Interfaz Gráfica PyQt6)
+
+Abre una **nueva ventana de la terminal**, navega a la carpeta del proyecto, activa el entorno virtual (`.venv`) y arranca la interfaz:
+
+```bash
+python -m client.gui.main_window
+```
+
+> ⚠️ **Regla de arquitectura obligatoria:** El cliente se comunica exclusivamente con el servidor a través de la red usando el objeto Proxy en el puerto 9090. El cliente no tiene credenciales de la base de datos ni se conecta directamente a ella bajo ninguna circunstancia.
+
+---
+
+## 7. Estructura del proyecto
 
 ```
-26 failed in 0.xx s
+sigomei/
+├── .env.example            # Plantilla de configuración (va al repositorio)
+├── .env                    # Configuración con contraseñas reales (ignorado por git)
+├── requirements.txt        # Lista de paquetes Python requeridos
+├── database/
+│   ├── schema.sql          # Script de creación de tablas DDL
+│   └── seed.sql            # Script de inserción de registros de prueba
+├── logs/                   # Archivos de bitácora generados por el servidor
+├── server/
+│   ├── main_server.py      # Punto de entrada ejecutable del servidor
+│   ├── auth/               # Módulos de AuthManager y sesión
+│   ├── controller/         # ISigomeiController (Fachada e interfaz remota de Pyro5)
+│   ├── service/            # Capa de servicios (Donde residen las 8 reglas de negocio)
+│   ├── dao/                # Capa de acceso a datos (Conexión a PostgreSQL vía psycopg2)
+│   └── exceptions/         # Excepciones personalizadas del dominio
+├── client/
+│   ├── proxy/
+│   │   └── sigomei_proxy.py # Stub intermedio que comunica al cliente con el servidor
+│   └── gui/
+│       └── main_window.py   # Punto de entrada de la interfaz gráfica en PyQt6
+└── tests/
+    └── services/            # Suite de 26 pruebas unitarias organizadas por regla (RN01..RN08)
 ```
+
+---
+
+## 8. Reglas de negocio implementadas
+
+El servidor valida rigurosamente las siguientes directrices antes de alterar el estado del sistema:
+
+| ID        | Regla de Negocio                                                                                            | Dónde se valida en el código                                    |
+| --------- | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| **RN-01** | La especialidad del técnico asignado debe coincidir con el tipo del equipo.                                 | `OrdenService.asignar_tecnico()`                                |
+| **RN-02** | Un equipo no puede tener más de una orden activa de forma simultánea en la misma fecha.                     | `OrdenService.crear_orden()`                                    |
+| **RN-03** | Solo se puede asignar un técnico a una orden si su estatus está como 'Activo'.                              | `OrdenService.asignar_tecnico()`                                |
+| **RN-04** | Integridad: No se puede dar de baja un equipo o técnico si cuenta con órdenes vigentes vinculadas.          | `EquipoService.baja_equipo()` / `TecnicoService.baja_tecnico()` |
+| **RN-05** | Coherencia cronológica: La `fecha_programada` ≤ `fecha_inicio` ≤ `fecha_cierre`.                            | `OrdenService.iniciar_ejecucion()` / `finalizar_orden()`        |
+| **RN-06** | Al cambiar al estado 'Finalizada', los campos `fecha_cierre` y `costo_real` pasan a ser obligatorios.       | `OrdenService.finalizar_orden()`                                |
+| **RN-07** | Los equipos con nivel de criticidad Alta exigen un técnico con certificación nivel II o III.                | `OrdenService.asignar_tecnico()`                                |
+| **RN-08** | El ciclo de vida de la orden solo admite transiciones válidas (ej. Programada → En ejecución → Finalizada). | `OrdenService._validar_transicion()`                            |
