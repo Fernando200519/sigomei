@@ -5,29 +5,25 @@ from server.service.equipo_service import EquipoService
 from server.service.tecnico_service import TecnicoService
 from server.service.orden_service import OrdenService
 
-
 @Pyro5.api.expose
 class ISigomeiController:
-    
-    def __init__(self):
-        self._auth = AuthManager()
-        self._equipo_svc = EquipoService()
-        self._tecnico_svc = TecnicoService()
-        self._orden_svc = OrdenService()
 
-    # ------------------------------------------------------------------
-    # Autenticación
-    # ------------------------------------------------------------------
+    def __init__(self):
+        self._auth        = AuthManager()
+        self._equipo_svc  = EquipoService()
+        self._tecnico_svc = TecnicoService()
+        self._orden_svc   = OrdenService()
+
+    #  Autenticación
 
     def login(self, username: str, password: str) -> str:
-        raise NotImplementedError
+        """Devuelve un token de sesión o lanza AutenticacionError."""
+        return self._auth.login(username, password)
 
     def logout(self, token: str) -> bool:
-        raise NotImplementedError
+        return self._auth.logout(token)
 
-    # ------------------------------------------------------------------
-    # Módulo 1: Gestión de Equipos
-    # ------------------------------------------------------------------
+    # Equipos
 
     def alta_equipo(
         self,
@@ -42,20 +38,22 @@ class ISigomeiController:
         estado_operativo: str,
         criticidad: str,
     ) -> bool:
-        raise NotImplementedError
+        return self._equipo_svc.alta_equipo(
+            id_equipo, nombre, tipo, marca, modelo,
+            numero_serie, ubicacion_planta, fecha_instalacion,
+            estado_operativo, criticidad,
+        )
 
-    def consultar_equipo(self, id_equipo: str) -> dict | None:
-        raise NotImplementedError
+    def consultar_equipo(self, id_equipo: str) -> dict:
+        return self._equipo_svc.consultar_equipo(id_equipo)
 
     def modificar_equipo(self, id_equipo: str, datos_actualizados: dict) -> bool:
-        raise NotImplementedError
+        return self._equipo_svc.modificar_equipo(id_equipo, datos_actualizados)
 
     def baja_equipo(self, id_equipo: str) -> bool:
-        raise NotImplementedError
+        return self._equipo_svc.baja_equipo(id_equipo)
 
-    # ------------------------------------------------------------------
-    # Módulo 2: Gestión de Técnicos
-    # ------------------------------------------------------------------
+    # Técnicos
 
     def alta_tecnico(
         self,
@@ -69,20 +67,21 @@ class ISigomeiController:
         fecha_ingreso: str,
         estatus: str,
     ) -> bool:
-        raise NotImplementedError
+        return self._tecnico_svc.alta_tecnico(
+            id_tecnico, nombre_completo, rfc, telefono, correo,
+            especialidad, nivel_certificacion, fecha_ingreso, estatus,
+        )
 
-    def consultar_tecnico(self, id_tecnico: str) -> dict | None:
-        raise NotImplementedError
+    def consultar_tecnico(self, id_tecnico: str) -> dict:
+        return self._tecnico_svc.consultar_tecnico(id_tecnico)
 
     def modificar_tecnico(self, id_tecnico: str, datos_actualizados: dict) -> bool:
-        raise NotImplementedError
+        return self._tecnico_svc.modificar_tecnico(id_tecnico, datos_actualizados)
 
     def baja_tecnico(self, id_tecnico: str) -> bool:
-        raise NotImplementedError
+        return self._tecnico_svc.baja_tecnico(id_tecnico)
 
-    # ------------------------------------------------------------------
-    # Módulo 3: Órdenes de Mantenimiento
-    # ------------------------------------------------------------------
+    # Órdenes de Mantenimiento
 
     def crear_orden(
         self,
@@ -93,22 +92,27 @@ class ISigomeiController:
         descripcion_trabajo: str,
         costo_estimado: float,
     ) -> bool:
-        raise NotImplementedError
+        return self._orden_svc.crear_orden(
+            id_orden, id_equipo, tipo_mantenimiento,
+            fecha_programada, descripcion_trabajo, costo_estimado,
+        )
 
     def consultar_orden(self, id_orden: str) -> dict:
-        raise NotImplementedError
+        return self._orden_svc.consultar_orden(id_orden)
 
     def asignar_tecnico(self, id_orden: str, id_tecnico: str) -> bool:
-        raise NotImplementedError
+        return self._orden_svc.asignar_tecnico(id_orden, id_tecnico)
 
     def iniciar_ejecucion(self, id_orden: str, fecha_inicio: str) -> bool:
-        raise NotImplementedError
+        return self._orden_svc.iniciar_ejecucion(id_orden, fecha_inicio)
 
-    def finalizar_orden(self, id_orden: str, fecha_cierre: str, costo_real: float) -> bool:
-        raise NotImplementedError
+    def finalizar_orden(
+        self, id_orden: str, fecha_cierre: str, costo_real: float
+    ) -> bool:
+        return self._orden_svc.finalizar_orden(id_orden, fecha_cierre, costo_real)
 
     def cancelar_orden(self, id_orden: str) -> bool:
-        raise NotImplementedError
+        return self._orden_svc.cancelar_orden(id_orden)
 
     def listar_ordenes_por_filtro(self, filtros: dict) -> list:
-        raise NotImplementedError
+        return self._orden_svc.listar_ordenes_por_filtro(filtros)

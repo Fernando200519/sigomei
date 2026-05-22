@@ -4,7 +4,7 @@ RN-02: Un equipo no puede tener dos órdenes activas
 """
 
 import pytest
-from server.exceptions.exceptions import ReglaNegocioError
+from server.exceptions.exceptions import EntidadDuplicadaError
 
 
 class TestRN02OrdenActivaDuplicada:
@@ -21,7 +21,7 @@ class TestRN02OrdenActivaDuplicada:
             {"id_orden": "OM-001", "estado_orden": "Programada", "fecha_programada": "2026-06-01"}
         ]
 
-        with pytest.raises(ReglaNegocioError):
+        with pytest.raises(EntidadDuplicadaError):
             orden_service.crear_orden(
                 "OM-002", "EQ-001", "Preventivo",
                 "2026-06-01", "Revisión general", 1500.0
