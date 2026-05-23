@@ -1,12 +1,3 @@
--- =============================================================
---  SIGOMEI — Datos de prueba (seed)
---  Ejecutar DESPUÉS de schema.sql:
---  psql -U <usuario> -d sigomei_db -f seed.sql
--- =============================================================
-
--- -------------------------------------------------------------
---  EQUIPOS  (6 registros — 3 tipos, variedad de criticidades)
--- -------------------------------------------------------------
 INSERT INTO equipos VALUES
     ('EQ-001', 'Transformador T1',      'Eléctrico',  'ABB',      'TX-500',  'SN-AAA-001', 'Nave A', '2020-01-15', 'Operativo',          'Alta'),
     ('EQ-002', 'Bomba Centrífuga B2',   'Mecánico',   'Grundfos', 'CM5',     'SN-BBB-002', 'Nave B', '2021-06-10', 'Operativo',          'Baja'),
@@ -15,9 +6,7 @@ INSERT INTO equipos VALUES
     ('EQ-005', 'Prensa Hidráulica H5',  'Hidráulico', 'Parker',   'PH-200',  'SN-EEE-005', 'Nave D', '2018-07-30', 'Operativo',          'Media'),
     ('EQ-006', 'Ventilador V6',         'Mecánico',   'Fläkt',    'VX-100',  'SN-FFF-006', 'Nave B', '2023-01-01', 'Fuera de Servicio',  'Baja');
 
--- -------------------------------------------------------------
---  TÉCNICOS  (5 registros — distintas especialidades y niveles)
--- -------------------------------------------------------------
+
 INSERT INTO tecnicos VALUES
     ('TEC-001', 'Carlos López',    'LOCA800101AAA', '9211234567', 'carlos@sigomei.mx', 'Mecánico',   'I',   '2022-03-01', 'Activo'),
     ('TEC-002', 'Ana Pérez',       'PEAA900202BBB', '9219876543', 'ana@sigomei.mx',    'Eléctrico',  'II',  '2021-07-15', 'Activo'),
@@ -25,9 +14,6 @@ INSERT INTO tecnicos VALUES
     ('TEC-004', 'María Torres',    'TOMA950404DDD', '9213330011', 'maria@sigomei.mx',  'Neumático',  'III', '2020-09-20', 'Activo'),
     ('TEC-005', 'Jorge Castillo',  'CAJG880505EEE', '9218887766', 'jorge@sigomei.mx',  'Hidráulico', 'II',  '2023-02-14', 'Activo');
 
--- -------------------------------------------------------------
---  ÓRDENES DE MANTENIMIENTO  (6 registros — todos los estados)
--- -------------------------------------------------------------
 INSERT INTO ordenes_mantenimiento
     (id_orden, id_equipo, id_tecnico, tipo_mantenimiento,
      fecha_programada, fecha_inicio, fecha_cierre,
@@ -41,7 +27,7 @@ VALUES
     -- Orden en ejecución
     ('OM-002', 'EQ-002', 'TEC-001', 'Correctivo',
      '2025-06-10', '2025-06-12', NULL,
-     'Reemplazo de rodamientos en bomba B2',    3200.00, NULL, 'En Ejecución'),
+     'Reemplazo de rodamientos en bomba B2',    3200.00, NULL, 'En ejecución'),
 
     -- Orden finalizada
     ('OM-003', 'EQ-003', 'TEC-004', 'Preventivo',
