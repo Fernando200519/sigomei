@@ -1,7 +1,7 @@
 """
 RN-08: Transiciones permitidas:
-         Programada → En ejecución → Finalizada
-         Cancelada solo desde Programada o En ejecución.
+         Programada → En Ejecucion → Finalizada
+         Cancelada solo desde Programada o En Ejecucion.
        Cualquier otra transición debe ser rechazada.
 """
 
@@ -38,7 +38,7 @@ class TestRN08TransicionesEstado:
     def test_finalizar_orden_en_ejecucion_es_valido(self, orden_service):
         orden_service._dao.buscar_por_id.return_value = {
             "id_orden": "OM-052",
-            "estado_orden": "En ejecución",
+            "estado_orden": "En Ejecucion",
             "fecha_programada": "2026-06-01",
             "fecha_inicio": "2026-06-03",
             "id_tecnico": "TEC-002",
@@ -50,7 +50,7 @@ class TestRN08TransicionesEstado:
         assert resultado is True
 
     def test_finalizar_orden_programada_lanza_excepcion(self, orden_service):
-        """No se puede finalizar una orden que no está 'En ejecución'."""
+        """No se puede finalizar una orden que no está 'En Ejecucion'."""
         orden_service._dao.buscar_por_id.return_value = {
             "id_orden": "OM-053",
             "estado_orden": "Programada",
@@ -74,7 +74,7 @@ class TestRN08TransicionesEstado:
     def test_cancelar_orden_en_ejecucion_es_valido(self, orden_service):
         orden_service._dao.buscar_por_id.return_value = {
             "id_orden": "OM-055",
-            "estado_orden": "En ejecución",
+            "estado_orden": "En Ejecucion",
         }
         orden_service._dao.actualizar_estado.return_value = True
 

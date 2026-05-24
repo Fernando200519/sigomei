@@ -1,5 +1,7 @@
-# Servidor
+# Servidor / RPC
 Pyro5>=5.14
+
+# Base de datos PostgreSQL
 psycopg2-binary>=2.9.9
 
 # Variables de entorno
@@ -9,4 +11,6 @@ python-dotenv>=1.0.0
 PyQt6>=6.6.0
 
 # Pruebas
-pytest>=7.0
+pytest>=7.0.0
+pytest-dotenv>=0.5.2
+coverage>=7.0.0

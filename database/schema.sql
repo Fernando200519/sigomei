@@ -1,12 +1,14 @@
+SET client_encoding = 'UTF8';
+
 DROP TABLE IF EXISTS ordenes_mantenimiento CASCADE;
-DROP TABLE IF EXISTS tecnicos            CASCADE;
-DROP TABLE IF EXISTS equipos             CASCADE;
+DROP TABLE IF EXISTS tecnicos             CASCADE;
+DROP TABLE IF EXISTS equipos              CASCADE;
 
 CREATE TABLE equipos (
     id_equipo         VARCHAR(20)  PRIMARY KEY,
     nombre            VARCHAR(100) NOT NULL,
     tipo              VARCHAR(30)  NOT NULL
-                          CHECK (tipo IN ('Eléctrico','Mecánico','Hidráulico','Neumático')),
+                          CHECK (tipo IN ('Electrico','Mecanico','Hidraulico','Neumatico')),
     marca             VARCHAR(60)  NOT NULL,
     modelo            VARCHAR(60)  NOT NULL,
     numero_serie      VARCHAR(60)  NOT NULL UNIQUE,
@@ -25,7 +27,7 @@ CREATE TABLE tecnicos (
     telefono            VARCHAR(15),
     correo              VARCHAR(80),
     especialidad        VARCHAR(30)  NOT NULL
-                            CHECK (especialidad IN ('Eléctrico','Mecánico','Hidráulico','Neumático')),
+                            CHECK (especialidad IN ('Electrico','Mecanico','Hidraulico','Neumatico')),
     nivel_certificacion VARCHAR(5)   NOT NULL
                             CHECK (nivel_certificacion IN ('I','II','III')),
     fecha_ingreso       DATE         NOT NULL,
@@ -50,7 +52,7 @@ CREATE TABLE ordenes_mantenimiento (
                             CHECK (estado_orden IN ('Programada','En ejecución','Finalizada','Cancelada')),
 
     CONSTRAINT chk_inicio_vs_programada
-        CHECK (fecha_inicio  IS NULL OR fecha_inicio  >= fecha_programada),
+        CHECK (fecha_inicio IS NULL OR fecha_inicio >= fecha_programada),
     CONSTRAINT chk_cierre_vs_inicio
-        CHECK (fecha_cierre  IS NULL OR fecha_inicio  IS NULL OR fecha_cierre >= fecha_inicio)
+        CHECK (fecha_cierre IS NULL OR fecha_inicio IS NULL OR fecha_cierre >= fecha_inicio)
 );

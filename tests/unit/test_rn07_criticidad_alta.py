@@ -19,7 +19,7 @@ class TestRN07CriticidadAlta:
         """
         tecnico_nivel1 = {
             "id_tecnico": "TEC-010",
-            "especialidad": "Eléctrico",
+            "especialidad": "Electrico",
             "nivel_certificacion": "I",
             "estatus": "Activo",
         }
@@ -52,6 +52,7 @@ class TestRN07CriticidadAlta:
         orden_service._equipo_dao.buscar_por_id.return_value = equipo_electrico_alta
         orden_service._tecnico_dao.buscar_por_id.return_value = tecnico_activo_electricista_nivel2
         orden_service._dao.asignar_tecnico.return_value = True
+        orden_service._dao.listar_por_filtros.return_value = None
 
         resultado = orden_service.asignar_tecnico("OM-041", "TEC-002")
         assert resultado is True
@@ -66,7 +67,7 @@ class TestRN07CriticidadAlta:
         """
         tecnico_mecanico_nivel1 = {
             "id_tecnico": "TEC-011",
-            "especialidad": "Mecánico",
+            "especialidad": "Mecanico",
             "nivel_certificacion": "I",
             "estatus": "Activo",
         }
@@ -79,6 +80,7 @@ class TestRN07CriticidadAlta:
         orden_service._equipo_dao.buscar_por_id.return_value = equipo_mecanico_baja
         orden_service._tecnico_dao.buscar_por_id.return_value = tecnico_mecanico_nivel1
         orden_service._dao.asignar_tecnico.return_value = True
+        orden_service._dao.listar_por_filtros.return_value = None
 
         resultado = orden_service.asignar_tecnico("OM-042", "TEC-011")
         assert resultado is True

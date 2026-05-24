@@ -16,7 +16,7 @@ class TestRN02OrdenActivaDuplicada:
         ENTONCES debe lanzar ReglaNegocioError
         """
         # Simulamos que ya hay una orden activa en esa fecha
-        orden_service._equipo_dao.buscar_por_id.return_value = {"id_equipo": "EQ-001", "tipo": "Eléctrico"}
+        orden_service._equipo_dao.buscar_por_id.return_value = {"id_equipo": "EQ-001", "tipo": "Electrico"}
         orden_service._dao.listar_por_filtros.return_value = [
             {"id_orden": "OM-001", "estado_orden": "Programada", "fecha_programada": "2026-06-01"}
         ]
@@ -33,7 +33,7 @@ class TestRN02OrdenActivaDuplicada:
         CUANDO se crea una orden para EQ-001 en una fecha diferente (2026-07-15)
         ENTONCES debe crearse sin error
         """
-        orden_service._equipo_dao.buscar_por_id.return_value = {"id_equipo": "EQ-001", "tipo": "Eléctrico"}
+        orden_service._equipo_dao.buscar_por_id.return_value = {"id_equipo": "EQ-001", "tipo": "Electrico"}
         orden_service._dao.listar_por_filtros.return_value = []
         orden_service._dao.buscar_por_id.return_value = None
         orden_service._dao.insertar.return_value = True

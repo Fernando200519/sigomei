@@ -54,7 +54,7 @@ class TestRN04IntegridadReferencial:
         """
         tecnico_service._dao.buscar_por_id.return_value = {"id_tecnico": "TEC-999"}
         tecnico_service._dao.tiene_ordenes_activas.return_value = False
-        tecnico_service._dao.eliminar.return_value = True
+        tecnico_service._dao.actualizar.return_value = True
 
         resultado = tecnico_service.baja_tecnico("TEC-999")
         assert resultado is True

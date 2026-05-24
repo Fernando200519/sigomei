@@ -23,7 +23,8 @@ def _get_config() -> dict:
         "dbname":   os.getenv("DB_NAME"),
         "user":     os.getenv("DB_USER"),
         "password": os.getenv("DB_PASSWORD"),
-        "options":  "-c client_encoding=UTF8",
+        "options": "-c client_encoding=UTF8"
+
     }
 
 def get_connection():

@@ -46,6 +46,7 @@ class TestRN01EspecialidadTecnico:
         orden_service._equipo_dao.buscar_por_id.return_value = equipo_electrico_alta
         orden_service._tecnico_dao.buscar_por_id.return_value = tecnico_activo_electricista_nivel2
         orden_service._dao.asignar_tecnico.return_value = True
+        orden_service._dao.listar_por_filtros.return_value = None
 
         resultado = orden_service.asignar_tecnico("OM-001", "TEC-002")
         assert resultado is True

@@ -1,30 +1,4 @@
 import pytest
-from unittest.mock import MagicMock
-from server.service.orden_service import OrdenService
-from server.service.equipo_service import EquipoService
-from server.service.tecnico_service import TecnicoService
-
-@pytest.fixture
-def orden_service():
-    svc = OrdenService()
-    svc._dao = MagicMock()
-    svc._equipo_dao = MagicMock()
-    svc._tecnico_dao = MagicMock()
-    return svc
-
-
-@pytest.fixture
-def equipo_service():
-    svc = EquipoService()
-    svc._dao = MagicMock()
-    return svc
-
-
-@pytest.fixture
-def tecnico_service():
-    svc = TecnicoService()
-    svc._dao = MagicMock()
-    return svc
 
 @pytest.fixture
 def equipo_electrico_alta():
@@ -32,7 +6,7 @@ def equipo_electrico_alta():
     return {
         "id_equipo": "EQ-001",
         "nombre": "Transformador T1",
-        "tipo": "Eléctrico",
+        "tipo": "Electrico",
         "marca": "ABB",
         "modelo": "TX-500",
         "numero_serie": "SN-AAA-001",
@@ -49,7 +23,7 @@ def equipo_mecanico_baja():
     return {
         "id_equipo": "EQ-002",
         "nombre": "Bomba B2",
-        "tipo": "Mecánico",
+        "tipo": "Mecanico",
         "marca": "Grundfos",
         "modelo": "CM5",
         "numero_serie": "SN-BBB-002",
@@ -68,7 +42,7 @@ def tecnico_activo_electricista_nivel1():
         "rfc": "LOCA800101AAA",
         "telefono": "9211234567",
         "correo": "carlos@sigomei.mx",
-        "especialidad": "Mecánico",
+        "especialidad": "Mecanico",
         "nivel_certificacion": "I",
         "fecha_ingreso": "2022-03-01",
         "estatus": "Activo",
@@ -83,7 +57,7 @@ def tecnico_activo_electricista_nivel2():
         "rfc": "PEAA900202BBB",
         "telefono": "9219876543",
         "correo": "ana@sigomei.mx",
-        "especialidad": "Eléctrico",
+        "especialidad": "Electrico",
         "nivel_certificacion": "II",
         "fecha_ingreso": "2021-07-15",
         "estatus": "Activo",
@@ -98,7 +72,7 @@ def tecnico_inactivo():
         "rfc": "RALU850303CCC",
         "telefono": "9215554433",
         "correo": "luis@sigomei.mx",
-        "especialidad": "Eléctrico",
+        "especialidad": "Electrico",
         "nivel_certificacion": "II",
         "fecha_ingreso": "2019-01-10",
         "estatus": "Inactivo",

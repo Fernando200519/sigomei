@@ -40,12 +40,32 @@ class OrdenService:
         if not equipo:
             raise EntidadNoEncontradaError(f"Equipo '{id_equipo}' no encontrado")
         
-        ordenes = self._dao.listar_por_filtros({"id_equipo": id_equipo})
-        for o in ordenes:
-            if _nfc(o.get("estado_orden", "")) in ESTADOS_ACTIVOS:
+        if costo_estimado < 0:
+            raise ReglaNegocioError()
+
+        # RN-02: El equipo no debe tener ya una orden activa EN LA MISMA FECHA
+        if isinstance(fecha_programada, str):
+            fecha_programada = date.fromisoformat(fecha_programada)
+
+        ordenes = self._dao.listar_por_filtros(
+            {"id_equipo": id_equipo}
+        )
+
+        for orden in ordenes:
+            fecha_orden = orden.get("fecha_programada")
+            if isinstance(fecha_orden, str):
+                fecha_orden = date.fromisoformat(fecha_orden)
+
+            if (
+                orden.get("estado_orden") in ESTADOS_ACTIVOS
+                and fecha_orden == fecha_programada
+            ):
                 raise EntidadDuplicadaError(
-                    f"RN-02: El equipo '{id_equipo}' ya tiene una orden activa "
-                    f"(id={o['id_orden']}, estado={o['estado_orden']})."
+                    f"RN-02: El equipo '{id_equipo}' "
+                    f"ya tiene una orden activa "
+                    f"para la fecha {fecha_programada} "
+                    f"(id={orden['id_orden']}, "
+                    f"estado={orden['estado_orden']})."
                 )
 
         datos = {
@@ -101,6 +121,16 @@ class OrdenService:
                     f"Se requiere nivel ≥ II; el técnico tiene nivel "
                     f"'{tecnico['nivel_certificacion']}'."
                 )
+        
+        # RN-16:
+        ordenes_activas = self._dao.listar_por_filtros(
+            {"id_tecnico": id_tecnico,
+             "estado_orden": "En Ejecucion"}
+        )
+
+        if ordenes_activas:
+            raise ReglaNegocioError("No es posible asignar un técnico con una orden En Ejecucion"
+            )
 
         return self._dao.asignar_tecnico(id_orden, id_tecnico)
 

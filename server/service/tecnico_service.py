@@ -6,7 +6,7 @@ from server.exceptions.exceptions import (
     IntegridadReferencialError,
 )
 
-ESPECIALIDADES_VALIDAS   = {"Eléctrico", "Mecánico", "Hidráulico", "Neumático"}
+ESPECIALIDADES_VALIDAS   = {"Electrico", "Mecanico", "Hidraulico", "Neumatico"}
 NIVELES_VALIDOS          = {"I", "II", "III"}
 ESTATUS_VALIDOS          = {"Activo", "Inactivo"}
 
@@ -75,4 +75,4 @@ class TecnicoService:
                 "y no puede darse de baja."
             )
 
-        return self._dao.eliminar(id_tecnico)
+        return self._dao.actualizar(id_tecnico, {"estatus": "Inactivo"})
