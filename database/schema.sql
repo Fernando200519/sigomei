@@ -3,10 +3,13 @@
 --  Ejecutar: psql -U <usuario> -d sigomei_db -f schema.sql
 -- =============================================================
 
+-- Forzar codificación UTF-8 para la sesión
+SET client_encoding = 'UTF8';
+
 -- Elimina las tablas si ya existen (orden inverso de FK)
 DROP TABLE IF EXISTS ordenes_mantenimiento CASCADE;
-DROP TABLE IF EXISTS tecnicos            CASCADE;
-DROP TABLE IF EXISTS equipos             CASCADE;
+DROP TABLE IF EXISTS tecnicos             CASCADE;
+DROP TABLE IF EXISTS equipos              CASCADE;
 
 -- -------------------------------------------------------------
 --  EQUIPOS
@@ -15,7 +18,7 @@ CREATE TABLE equipos (
     id_equipo         VARCHAR(20)  PRIMARY KEY,
     nombre            VARCHAR(100) NOT NULL,
     tipo              VARCHAR(30)  NOT NULL
-                          CHECK (tipo IN ('Eléctrico','Mecánico','Hidráulico','Neumático')),
+                          CHECK (tipo IN ('Electrico','Mecanico','Hidraulico','Neumatico')),
     marca             VARCHAR(60)  NOT NULL,
     modelo            VARCHAR(60)  NOT NULL,
     numero_serie      VARCHAR(60)  NOT NULL UNIQUE,
@@ -28,7 +31,7 @@ CREATE TABLE equipos (
 );
 
 -- -------------------------------------------------------------
---  TÉCNICOS
+--  TECNICOS
 -- -------------------------------------------------------------
 CREATE TABLE tecnicos (
     id_tecnico          VARCHAR(20)  PRIMARY KEY,
@@ -37,7 +40,7 @@ CREATE TABLE tecnicos (
     telefono            VARCHAR(15),
     correo              VARCHAR(80),
     especialidad        VARCHAR(30)  NOT NULL
-                            CHECK (especialidad IN ('Eléctrico','Mecánico','Hidráulico','Neumático')),
+                            CHECK (especialidad IN ('Electrico','Mecanico','Hidraulico','Neumatico')),
     nivel_certificacion VARCHAR(5)   NOT NULL
                             CHECK (nivel_certificacion IN ('I','II','III')),
     fecha_ingreso       DATE         NOT NULL,
@@ -46,7 +49,7 @@ CREATE TABLE tecnicos (
 );
 
 -- -------------------------------------------------------------
---  ÓRDENES DE MANTENIMIENTO
+--  ORDENES DE MANTENIMIENTO
 -- -------------------------------------------------------------
 CREATE TABLE ordenes_mantenimiento (
     id_orden            VARCHAR(20)    PRIMARY KEY,
@@ -62,11 +65,11 @@ CREATE TABLE ordenes_mantenimiento (
     costo_estimado      NUMERIC(12,2)  NOT NULL,
     costo_real          NUMERIC(12,2),
     estado_orden        VARCHAR(20)    NOT NULL DEFAULT 'Programada'
-                            CHECK (estado_orden IN ('Programada','En Ejecución','Finalizada','Cancelada')),
+                            CHECK (estado_orden IN ('Programada','En Ejecucion','Finalizada','Cancelada')),
 
     -- Restricciones de coherencia de fechas (RN-05) a nivel BD
     CONSTRAINT chk_inicio_vs_programada
-        CHECK (fecha_inicio  IS NULL OR fecha_inicio  >= fecha_programada),
+        CHECK (fecha_inicio IS NULL OR fecha_inicio >= fecha_programada),
     CONSTRAINT chk_cierre_vs_inicio
-        CHECK (fecha_cierre  IS NULL OR fecha_inicio  IS NULL OR fecha_cierre >= fecha_inicio)
+        CHECK (fecha_cierre IS NULL OR fecha_inicio IS NULL OR fecha_cierre >= fecha_inicio)
 );

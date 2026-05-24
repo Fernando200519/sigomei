@@ -5,8 +5,10 @@ from server.exceptions.exceptions import (
     ReglaNegocioError,
     IntegridadReferencialError,
 )
+from psycopg2.errors import UniqueViolation, CheckViolation
 
-TIPOS_VALIDOS       = {"Eléctrico", "Mecánico", "Hidráulico", "Neumático"}
+
+TIPOS_VALIDOS       = {"Electrico", "Mecanico", "Hidraulico", "Neumatico"}
 CRITICIDADES_VALIDAS = {"Alta", "Media", "Baja"}
 ESTADOS_VALIDOS     = {"Operativo", "En Mantenimiento", "Fuera de Servicio"}
 
@@ -39,6 +41,9 @@ class EquipoService:
         if self._dao.buscar_por_id(id_equipo):
             raise EntidadDuplicadaError(f"Ya existe un equipo con id '{id_equipo}'")
 
+        if self._dao.buscar_por_numero_serie(numero_serie):
+            raise EntidadDuplicadaError(f"Ya existe un equipo con número de serie '{numero_serie}'")
+
         datos = {
             "id_equipo":         id_equipo,
             "nombre":            nombre,
@@ -51,8 +56,18 @@ class EquipoService:
             "estado_operativo":  estado_operativo,
             "criticidad":        criticidad,
         }
-        return self._dao.insertar(datos)
+        try:
+            return self._dao.insertar(datos)
 
+        except UniqueViolation:
+            raise EntidadDuplicadaError(
+                f"Ya existe un equipo con número de serie '{numero_serie}'"
+            )
+
+        except CheckViolation as e:
+            raise ReglaNegocioError(
+                f"Datos inválidos del equipo: {e}"
+            )
     def consultar_equipo(self, id_equipo: str) -> dict:
         equipo = self._dao.buscar_por_id(id_equipo)
         if not equipo:

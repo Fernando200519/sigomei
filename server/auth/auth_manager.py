@@ -4,6 +4,7 @@ from server.exceptions.exceptions import AutenticacionError
 _USUARIOS = {
     "admin": "admin123",
     "tecnico": "tec456",
+    "supervisor@sigomei.mx": "Test1234"
 }
 
 

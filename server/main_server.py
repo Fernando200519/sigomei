@@ -4,7 +4,9 @@ from pathlib import Path
 from datetime import datetime
 
 import Pyro5.server
+from Pyro5.api import register_dict_to_class
 from dotenv import load_dotenv
+from server.exceptions.exceptions import *
 
 _ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(dotenv_path=_ROOT / ".env")
@@ -32,7 +34,33 @@ log = logging.getLogger("sigomei.server")
 
 from server.controller.isigomei_controller import ISigomeiController   # noqa: E402
 
+from server.exceptions.exceptions import (
+    EntidadDuplicadaError,
+    EntidadNoEncontradaError,
+    ReglaNegocioError,
+    IntegridadReferencialError,
+    EstadoInvalidoError,
+    AutenticacionError,
+)
 
+_EXCEPCIONES_SIGOMEI = {
+    "server.exceptions.exceptions.EntidadDuplicadaError":    EntidadDuplicadaError,
+    "server.exceptions.exceptions.EntidadNoEncontradaError": EntidadNoEncontradaError,
+    "server.exceptions.exceptions.ReglaNegocioError":        ReglaNegocioError,
+    "server.exceptions.exceptions.IntegridadReferencialError": IntegridadReferencialError,
+    "server.exceptions.exceptions.EstadoInvalidoError":      EstadoInvalidoError,
+    "server.exceptions.exceptions.AutenticacionError":       AutenticacionError,
+}
+
+def _hacer_reconstructor(cls):
+    """Devuelve una función reconstructora para la clase dada."""
+    def reconstructor(classname, d):
+        return cls()
+    return reconstructor
+
+for _nombre, _cls in _EXCEPCIONES_SIGOMEI.items():
+    register_dict_to_class(_nombre, _hacer_reconstructor(_cls))
+                           
 def main():
     log.info("Iniciando servidor SIGOMEI…")
     log.info("Archivo de bitácora: %s", _log_filename)

@@ -1,5 +1,5 @@
 from server.dao.db_connection import get_connection
-
+import psycopg2
 
 class EquipoDAO:
 
@@ -15,7 +15,11 @@ class EquipoDAO:
         """
         with get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute(sql, datos)
+                try: 
+                    cur.execute(sql, datos)
+                except psycopg2.Error as e:
+                    print("PG ERROR:", e.args)
+                    raise
             conn.commit()
         return True
 
@@ -24,6 +28,14 @@ class EquipoDAO:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (id_equipo,))
+                row = cur.fetchone()
+        return dict(row) if row else None
+    
+    def buscar_por_numero_serie(self, num_serie: str) -> dict | None:
+        sql = "SELECT * FROM equipos WHERE numero_serie = %s"
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (num_serie,))
                 row = cur.fetchone()
         return dict(row) if row else None
 

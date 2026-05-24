@@ -13,13 +13,13 @@ from server.exceptions.exceptions import (
 NIVEL_NUM: dict[str, int] = {"I": 1, "II": 2, "III": 3}
 
 TRANSICIONES_VALIDAS: dict[str, list[str]] = {
-    "Programada":    ["En Ejecución", "Cancelada"],
-    "En ejecución":  ["Finalizada",   "Cancelada"],
+    "Programada":    ["En Ejecucion", "Cancelada"],
+    "En Ejecucion":  ["Finalizada",   "Cancelada"],
     "Finalizada":    [],
     "Cancelada":     [],
 }
 
-ESTADOS_ACTIVOS = {"Programada", "En Ejecución"}
+ESTADOS_ACTIVOS = {"Programada", "En Ejecucion"}
 
 
 class OrdenService:
@@ -42,16 +42,31 @@ class OrdenService:
         equipo = self._equipo_dao.buscar_por_id(id_equipo)
         if not equipo:
             raise EntidadNoEncontradaError(f"Equipo '{id_equipo}' no encontrado")
+        
+        if costo_estimado < 0:
+            raise ReglaNegocioError()
 
         # RN-02: El equipo no debe tener ya una orden activa EN LA MISMA FECHA
-        ordenes = self._dao.listar_por_filtros({"id_equipo": id_equipo})
-        for o in ordenes:
-            # Agregamos la validación de la fecha programada aquí:
-            if o.get("estado_orden") in ESTADOS_ACTIVOS and o.get("fecha_programada") == fecha_programada:
+        if isinstance(fecha_programada, str):
+            fecha_programada = date.fromisoformat(fecha_programada)
+
+        ordenes = self._dao.listar_por_filtros(
+            {"id_equipo": id_equipo}
+        )
+
+        for orden in ordenes:
+            fecha_orden = orden.get("fecha_programada")
+
+            if (
+                orden.get("estado_orden") in ESTADOS_ACTIVOS
+                and fecha_orden == fecha_programada
+            ):
                 raise EntidadDuplicadaError(
-                    f"RN-02: El equipo '{id_equipo}' ya tiene una orden activa "
+                    f"RN-02: El equipo '{id_equipo}' "
+                    f"ya tiene una orden activa "
                     f"para la fecha {fecha_programada} "
-                    f"(id={o['id_orden']}, estado={o['estado_orden']})."
+                    f"(id={orden['id_orden']}, "
+                    f"estado={orden['estado_orden']})."
                 )
 
         datos = {
@@ -119,7 +134,7 @@ class OrdenService:
             raise EntidadNoEncontradaError(f"Orden '{id_orden}' no encontrada")
 
         # RN-08: Transición válida
-        self._validar_transicion(orden["estado_orden"], "En Ejecución")
+        self._validar_transicion(orden["estado_orden"], "En Ejecucion")
 
         # RN-05: fecha_inicio ≥ fecha_programada
         fp = _parse_fecha(orden["fecha_programada"])
@@ -130,7 +145,7 @@ class OrdenService:
                 f"anterior a la fecha programada ({orden['fecha_programada']})."
             )
 
-        self._dao.actualizar_estado(id_orden, "En Ejecución")
+        self._dao.actualizar_estado(id_orden, "En Ejecucion")
         return self._dao.actualizar_inicio(id_orden, fecha_inicio)
 
     def finalizar_orden(

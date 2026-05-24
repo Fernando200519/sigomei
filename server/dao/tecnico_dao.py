@@ -1,5 +1,5 @@
 from server.dao.db_connection import get_connection
-
+import psycopg2
 
 class TecnicoDAO:
 
@@ -7,18 +7,39 @@ class TecnicoDAO:
         sql = """
             INSERT INTO tecnicos
                 (id_tecnico, nombre_completo, rfc, telefono, correo,
-                 especialidad, nivel_certificacion, fecha_ingreso, estatus)
+                especialidad, nivel_certificacion, fecha_ingreso, estatus)
             VALUES
-                (%(id_tecnico)s, %(nombre_completo)s, %(rfc)s, %(telefono)s,
-                 %(correo)s, %(especialidad)s, %(nivel_certificacion)s,
-                 %(fecha_ingreso)s, %(estatus)s)
+                (%(id_tecnico)s, %(nombre_completo)s, %(rfc)s,
+                %(telefono)s, %(correo)s, %(especialidad)s,
+                %(nivel_certificacion)s, %(fecha_ingreso)s,
+                %(estatus)s)
         """
-        with get_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute(sql, datos)
-            conn.commit()
-        return True
 
+        try:
+            with get_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(sql, datos)
+
+                conn.commit()
+
+            return True
+
+        except psycopg2.Error as e:
+            print("\n========== ERROR POSTGRES ==========")
+            print("TIPO:", type(e).__name__)
+            print("MENSAJE:", str(e))
+
+            print("\nDIAGNÓSTICO:")
+            print("constraint:", e.diag.constraint_name)
+            print("detail:", e.diag.message_detail)
+            print("table:", e.diag.table_name)
+
+            print("\nDATOS:")
+            print(datos)
+
+            print("====================================\n")
+
+            raise RuntimeError(str(e))   # <- CLAVE
     def buscar_por_id(self, id_tecnico: str) -> dict | None:
         sql = "SELECT * FROM tecnicos WHERE id_tecnico = %s"
         with get_connection() as conn:
