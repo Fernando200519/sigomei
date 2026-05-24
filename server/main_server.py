@@ -32,7 +32,7 @@ logging.basicConfig(
 
 log = logging.getLogger("sigomei.server")
 
-from server.controller.isigomei_controller import ISigomeiController   # noqa: E402
+from server.controller.isigomei_controller import ISigomeiController
 
 from server.exceptions.exceptions import (
     EntidadDuplicadaError,

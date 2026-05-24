@@ -1,0 +1,40 @@
+2026-05-23 12:59:03  INFO      sigomei.server — Iniciando servidor SIGOMEI…
+2026-05-23 12:59:03  INFO      sigomei.server — Archivo de bitácora: C:\Proyectos\sigomei\logs\sigomei_20260523_125903.log
+2026-05-23 12:59:03  INFO      sigomei.server — Controlador registrado → PYRO:sigomei.controller@localhost:9090
+2026-05-23 12:59:03  INFO      sigomei.server — Esperando peticiones en localhost:9090 …
+2026-05-23 12:59:21  INFO      sigomei.server — Solicitud remota recibida: alta_equipo | Parámetros: ('EQ-100', 'Motor Eléctrico Demo', 'Eléctrico', 'Siemens', '1LE1', 'SN-DEMO-100', 'Nave Demo', '2024-01-10', 'Operativo', 'Alta')
+2026-05-23 12:59:21  INFO      sigomei.server — Operación exitosa: alta_equipo | Respuesta: True
+2026-05-23 12:59:22  INFO      sigomei.server — Solicitud remota recibida: consultar_equipo | Parámetros: ('EQ-100',)
+2026-05-23 12:59:22  INFO      sigomei.server — Operación exitosa: consultar_equipo | Respuesta: {'id_equipo': 'EQ-100', 'nombre': 'Motor Eléctrico Demo', 'tipo': 'Eléctrico', 'marca': 'Siemens', 'modelo': '1LE1', 'numero_serie': 'SN-DEMO-100', 'ubicacion_planta': 'Nave Demo', 'fecha_instalacion': datetime.date(2024, 1, 10), 'estado_operativo': 'Operativo', 'criticidad': 'Alta'}
+2026-05-23 12:59:23  INFO      sigomei.server — Solicitud remota recibida: modificar_equipo | Parámetros: ('EQ-100', {'estado_operativo': 'En Mantenimiento'})
+2026-05-23 12:59:23  INFO      sigomei.server — Operación exitosa: modificar_equipo | Respuesta: True
+2026-05-23 12:59:23  INFO      sigomei.server — Solicitud remota recibida: consultar_equipo | Parámetros: ('EQ-100',)
+2026-05-23 12:59:23  INFO      sigomei.server — Operación exitosa: consultar_equipo | Respuesta: {'id_equipo': 'EQ-100', 'nombre': 'Motor Eléctrico Demo', 'tipo': 'Eléctrico', 'marca': 'Siemens', 'modelo': '1LE1', 'numero_serie': 'SN-DEMO-100', 'ubicacion_planta': 'Nave Demo', 'fecha_instalacion': datetime.date(2024, 1, 10), 'estado_operativo': 'En Mantenimiento', 'criticidad': 'Alta'}
+2026-05-23 12:59:23  INFO      sigomei.server — Solicitud remota recibida: alta_tecnico | Parámetros: ('TEC-100', 'Demo Técnico Uno', 'DEMO800101XYZ', '9990000001', 'demo1@sigomei.mx', 'Eléctrico', 'I', '2024-03-01', 'Activo')
+2026-05-23 12:59:24  INFO      sigomei.server — Operación exitosa: alta_tecnico | Respuesta: True
+2026-05-23 12:59:24  INFO      sigomei.server — Solicitud remota recibida: alta_tecnico | Parámetros: ('TEC-101', 'Demo Técnico Dos', 'DEMO900202XYZ', '9990000002', 'demo2@sigomei.mx', 'Eléctrico', 'II', '2023-06-15', 'Activo')
+2026-05-23 12:59:24  INFO      sigomei.server — Operación exitosa: alta_tecnico | Respuesta: True
+2026-05-23 12:59:24  INFO      sigomei.server — Solicitud remota recibida: consultar_tecnico | Parámetros: ('TEC-101',)
+2026-05-23 12:59:24  INFO      sigomei.server — Operación exitosa: consultar_tecnico | Respuesta: {'id_tecnico': 'TEC-101', 'nombre_completo': 'Demo Técnico Dos', 'rfc': 'DEMO900202XYZ', 'telefono': '9990000002', 'correo': 'demo2@sigomei.mx', 'especialidad': 'Eléctrico', 'nivel_certificacion': 'II', 'fecha_ingreso': datetime.date(2023, 6, 15), 'estatus': 'Activo'}
+2026-05-23 12:59:24  INFO      sigomei.server — Solicitud remota recibida: modificar_tecnico | Parámetros: ('TEC-101', {'correo': 'demo2_nuevo@sigomei.mx'})
+2026-05-23 12:59:24  INFO      sigomei.server — Operación exitosa: modificar_tecnico | Respuesta: True
+2026-05-23 12:59:25  INFO      sigomei.server — Solicitud remota recibida: crear_orden | Parámetros: ('OM-100', 'EQ-100', 'Preventivo', '2026-06-01', 'Revisión general del motor de demostración', 3500.0)
+2026-05-23 12:59:25  INFO      sigomei.server — Operación exitosa: crear_orden | Respuesta: True
+2026-05-23 12:59:25  INFO      sigomei.server — Solicitud remota recibida: consultar_orden | Parámetros: ('OM-100',)
+2026-05-23 12:59:25  INFO      sigomei.server — Operación exitosa: consultar_orden | Respuesta: {'id_orden': 'OM-100', 'id_equipo': 'EQ-100', 'id_tecnico': None, 'tipo_mantenimiento': 'Preventivo', 'fecha_programada': datetime.date(2026, 6, 1), 'fecha_inicio': None, 'fecha_cierre': None, 'descripcion_trabajo': 'Revisión general del motor de demostración', 'costo_estimado': Decimal('3500.00'), 'costo_real': None, 'estado_orden': 'Programada'}
+2026-05-23 12:59:26  INFO      sigomei.server — Solicitud remota recibida: asignar_tecnico | Parámetros: ('OM-100', 'TEC-001')
+2026-05-23 12:59:26  WARNING   sigomei.server — Validación de Regla denegada en asignar_tecnico: ReglaNegocioError — RN-01: La especialidad del técnico ('Mecánico') no coincide con el tipo del equipo ('Eléctrico').
+2026-05-23 12:59:27  INFO      sigomei.server — Solicitud remota recibida: asignar_tecnico | Parámetros: ('OM-100', 'TEC-100')
+2026-05-23 12:59:27  WARNING   sigomei.server — Validación de Regla denegada en asignar_tecnico: ReglaNegocioError — RN-07: El equipo 'EQ-100' es de criticidad Alta. Se requiere nivel ≥ II; el técnico tiene nivel 'I'.
+2026-05-23 12:59:27  INFO      sigomei.server — Solicitud remota recibida: asignar_tecnico | Parámetros: ('OM-100', 'TEC-101')
+2026-05-23 12:59:28  INFO      sigomei.server — Operación exitosa: asignar_tecnico | Respuesta: True
+2026-05-23 12:59:28  INFO      sigomei.server — Solicitud remota recibida: iniciar_ejecucion | Parámetros: ('OM-100', '2026-06-02')
+2026-05-23 12:59:28  INFO      sigomei.server — Operación exitosa: iniciar_ejecucion | Respuesta: True
+2026-05-23 12:59:28  INFO      sigomei.server — Solicitud remota recibida: finalizar_orden | Parámetros: ('OM-100', '2026-06-05', 3200.0)
+2026-05-23 12:59:28  INFO      sigomei.server — Operación exitosa: finalizar_orden | Respuesta: True
+2026-05-23 12:59:28  INFO      sigomei.server — Solicitud remota recibida: consultar_orden | Parámetros: ('OM-100',)
+2026-05-23 12:59:28  INFO      sigomei.server — Operación exitosa: consultar_orden | Respuesta: {'id_orden': 'OM-100', 'id_equipo': 'EQ-100', 'id_tecnico': 'TEC-101', 'tipo_mantenimiento': 'Preventivo', 'fecha_programada': datetime.date(2026, 6, 1), 'fecha_inicio': datetime.date(2026, 6, 2), 'fecha_cierre': datetime.date(2026, 6, 5), 'descripcion_trabajo': 'Revisión general del motor de demostración', 'costo_estimado': Decimal('3500.00'), 'costo_real': Decimal('3200.00'), 'estado_orden': 'Finalizada'}
+2026-05-23 12:59:29  INFO      sigomei.server — Solicitud remota recibida: baja_equipo | Parámetros: ('EQ-100',)
+2026-05-23 12:59:29  WARNING   sigomei.server — Validación de Regla denegada en baja_equipo: IntegridadReferencialError — RN-04: El equipo 'EQ-100' tiene órdenes de mantenimiento vinculadas y no puede eliminarse.
+2026-05-23 12:59:29  INFO      sigomei.server — Solicitud remota recibida: baja_tecnico | Parámetros: ('TEC-100',)
+2026-05-23 12:59:30  INFO      sigomei.server — Operación exitosa: baja_tecnico | Respuesta: True

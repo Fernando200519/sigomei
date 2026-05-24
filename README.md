@@ -74,33 +74,55 @@ SERVER_OBJECT_ID=sigomei.controller
 
 ## 3. Configurar la base de datos PostgreSQL
 
-Asegúrate de que tu servicio de PostgreSQL esté corriendo y ejecuta los siguientes comandos en tu terminal para preparar el esquema y los datos iniciales:
+PostgreSQL requiere que los datos y los scripts se manejen en UTF-8. Si estás en Windows, la consola suele usar cp1252 por defecto, lo que corromperá los caracteres acentuados (é, ó) y hará que fallen las reglas de negocio.
 
-### 3.1 Crear la base de datos
+### 3.1 Preparar la terminal (Solo Windows — Obligatorio)
 
 ```bash
-psql -U postgres -c "CREATE DATABASE sigomei_db;"
+# Cambiar el mapa de caracteres de la consola a UTF-8
+chcp 65001
+
+# Forzar al cliente de PostgreSQL a usar UTF-8
+$env:PGCLIENTENCODING="utf-8"
 ```
 
-### 3.2 Crear las tablas (Esquema)
+### 3.2 Crear la base de datos
+
+Crea el contenedor de datos asegurando el encoding de forma explícita:
+
+```bash
+# Elimina la base de datos si ya existía un intento previo
+psql -U postgres -c "DROP DATABASE IF EXISTS sigomei_db;"
+
+# Crea la base de datos limpia en formato UTF8
+psql -U postgres -c "CREATE DATABASE sigomei_db WITH ENCODING 'UTF8';"
+```
+
+### 3.3 Crear las tablas (Esquema)
+
+Construye la estructura de tablas ejecutando el archivo DDL:
 
 ```bash
 psql -U postgres -d sigomei_db -f database/schema.sql
 ```
 
-### 3.3 Cargar datos de prueba iniciales (Seeding)
+### 3.4 Cargar datos de prueba iniciales (Seeding)
+
+Inserta los registros ficticios para las pruebas del CRUD:
 
 ```bash
 psql -U postgres -d sigomei_db -f database/seed.sql
 ```
 
-### 3.4 Verificar la carga
+### 3.5 Verificar la configuración
+
+Ejecuta una consulta rápida para confirmar que los datos se importaron sin corromperse:
 
 ```bash
 psql -U postgres -d sigomei_db -c "SELECT * FROM equipos;"
 ```
 
-_Si todo salió bien, la consola te mostrará una tabla con los 6 equipos de prueba iniciales._
+Deberías ver una tabla limpia con 6 equipos de prueba. Nota: La aplicación ya fuerza automáticamente `client_encoding=UTF8` en cada conexión desde `db_connection.py`, por lo que el servidor no requerirá configuraciones adicionales.
 
 ---
 
