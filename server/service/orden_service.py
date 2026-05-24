@@ -56,6 +56,8 @@ class OrdenService:
 
         for orden in ordenes:
             fecha_orden = orden.get("fecha_programada")
+            if isinstance(fecha_orden, str):
+                fecha_orden = date.fromisoformat(fecha_orden)
 
             if (
                 orden.get("estado_orden") in ESTADOS_ACTIVOS
@@ -125,6 +127,16 @@ class OrdenService:
                     f"Se requiere técnico con nivel ≥ II; "
                     f"el técnico tiene nivel '{tecnico['nivel_certificacion']}'."
                 )
+        
+        # RN-16:
+        ordenes_activas = self._dao.listar_por_filtros(
+            {"id_tecnico": id_tecnico,
+             "estado_orden": "En Ejecucion"}
+        )
+
+        if ordenes_activas:
+            raise ReglaNegocioError("No es posible asignar un técnico con una orden En Ejecucion"
+            )
 
         return self._dao.asignar_tecnico(id_orden, id_tecnico)
 

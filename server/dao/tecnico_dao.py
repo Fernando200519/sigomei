@@ -1,5 +1,5 @@
 from server.dao.db_connection import get_connection
-import psycopg2
+import psycopg2 
 
 class TecnicoDAO:
 
@@ -25,21 +25,8 @@ class TecnicoDAO:
             return True
 
         except psycopg2.Error as e:
-            print("\n========== ERROR POSTGRES ==========")
-            print("TIPO:", type(e).__name__)
-            print("MENSAJE:", str(e))
-
-            print("\nDIAGNÓSTICO:")
-            print("constraint:", e.diag.constraint_name)
-            print("detail:", e.diag.message_detail)
-            print("table:", e.diag.table_name)
-
-            print("\nDATOS:")
-            print(datos)
-
-            print("====================================\n")
-
-            raise RuntimeError(str(e))   # <- CLAVE
+            raise Exception(e)
+        
     def buscar_por_id(self, id_tecnico: str) -> dict | None:
         sql = "SELECT * FROM tecnicos WHERE id_tecnico = %s"
         with get_connection() as conn:
