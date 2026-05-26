@@ -149,7 +149,8 @@ class TestTC_SIS_05_CriticidadAltaCertificacionInsuficiente:
         )
 
         with pytest.raises(ReglaNegocioError):
-            rmi_registry.asignar_tecnico("ORD-001", "TEC-001")  # Cert. I
+            rmi_registry.asignar_tecnico("ORD-001", "TEC-001")  
+
 
 
 class TestTC_SIS_06_OrdenDuplicadaMismaFecha:
@@ -380,42 +381,42 @@ class TestTC_SIS_19_HistoricoFiltroEquipo:
         for orden in resultado:
             assert orden["id_equipo"] == "EQ-001"
 
+@pytest.mark.skip(reason="La consulta por filtros no se encuentra implementada aún")
+class TestTC_SIS_20_HistoricoFiltroFechas:
+    """TC-SIS-20 | RF-17"""
 
-# class TestTC_SIS_20_HistoricoFiltroFechas:
-#     """TC-SIS-20 | RF-17"""
+    def test_sis20_historico_filtrado_por_rango_de_fechas(self, rmi_registry, db_test):
+        """
+        DADO órdenes finalizadas en distintas fechas
+        CUANDO se aplica filtro con rango 2026-01-01 a 2026-03-31
+        ENTONCES solo se retornan órdenes cuya fecha cae dentro del rango.
+        """
+        rmi_registry.alta_equipo(**EQUIPO_MECANICO)
+        rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)
 
-#     def test_sis20_historico_filtrado_por_rango_de_fechas(self, rmi_registry, db_test):
-#         """
-#         DADO órdenes finalizadas en distintas fechas
-#         CUANDO se aplica filtro con rango 2026-01-01 a 2026-03-31
-#         ENTONCES solo se retornan órdenes cuya fecha cae dentro del rango.
-#         """
-#         rmi_registry.alta_equipo(**EQUIPO_MECANICO)
-#         rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)
+        ordenes = [
+            ("ORD-R01", "2026-01-15", "2026-01-16"),  # dentro
+            ("ORD-R02", "2026-03-20", "2026-03-21"),  # dentro
+            ("ORD-R03", "2026-05-10", "2026-05-11"),  # fuera
+        ]
+        for id_orden, f_prog, f_cierre in ordenes:
+            rmi_registry.crear_orden(
+                id_orden=id_orden, id_equipo="EQ-001",
+                tipo_mantenimiento="Preventivo", fecha_programada=f_prog,
+                descripcion_trabajo="Revisión", costo_estimado=500.0,
+            )
+            rmi_registry.asignar_tecnico(id_orden, "TEC-002")
+            rmi_registry.iniciar_ejecucion(id_orden, f_prog)
+            rmi_registry.finalizar_orden(id_orden, f_cierre, 550.0)
 
-#         ordenes = [
-#             ("ORD-R01", "2026-01-15", "2026-01-16"),  # dentro
-#             ("ORD-R02", "2026-03-20", "2026-03-21"),  # dentro
-#             ("ORD-R03", "2026-05-10", "2026-05-11"),  # fuera
-#         ]
-#         for id_orden, f_prog, f_cierre in ordenes:
-#             rmi_registry.crear_orden(
-#                 id_orden=id_orden, id_equipo="EQ-001",
-#                 tipo_mantenimiento="Preventivo", fecha_programada=f_prog,
-#                 descripcion_trabajo="Revisión", costo_estimado=500.0,
-#             )
-#             rmi_registry.asignar_tecnico(id_orden, "TEC-002")
-#             rmi_registry.iniciar_ejecucion(id_orden, f_prog)
-#             rmi_registry.finalizar_orden(id_orden, f_cierre, 550.0)
+        resultado = rmi_registry.listar_ordenes_por_filtro({
+            "fecha_desde": "2026-01-01",
+            "fecha_hasta": "2026-03-31",
+        })
 
-#         resultado = rmi_registry.listar_ordenes_por_filtro({
-#             "fecha_desde": "2026-01-01",
-#             "fecha_hasta": "2026-03-31",
-#         })
-
-#         assert len(resultado) == 2
-#         for orden in resultado:
-#             assert orden["fecha_programada"] <= "2026-03-31"
+        assert len(resultado) == 2
+        for orden in resultado:
+            assert orden["fecha_programada"] <= "2026-03-31"
 
 
 class TestTC_SIS_22_CostoEstimadoNegativo:
@@ -491,3 +492,4 @@ class TestTC_SIS_24_ReasignacionTecnico:
         assert resultado is True
         orden = rmi_registry.consultar_orden("ORD-007")
         assert orden["id_tecnico"] == "TEC-PED"
+

@@ -4,7 +4,7 @@ RN-04: No se permite eliminar un Equipo o un Técnico
 """
 
 import pytest
-from server.exceptions.exceptions import IntegridadReferencialError
+from server.exceptions.exceptions import EntidadNoEncontradaError, IntegridadReferencialError
 
 
 class TestRN04IntegridadReferencial:
@@ -58,3 +58,77 @@ class TestRN04IntegridadReferencial:
 
         resultado = tecnico_service.baja_tecnico("TEC-999")
         assert resultado is True
+
+    def test_crear_orden_equipo_no_existente_es_invalido(
+        self, orden_service
+    ):
+        orden_service._equipo_dao.buscar_por_id.return_value = None
+
+        with pytest.raises(EntidadNoEncontradaError):
+            orden_service.crear_orden(
+                "OM-001",
+                "EQ-001",
+                "Preventivo",
+                "2026-05-24",
+                "Cambio de piezas",
+                1000.0
+            )
+    def test_consultar_orden_no_existente_es_invalido(
+        self, orden_service
+    ):
+        orden_service._dao.buscar_por_id.return_value = None
+
+        with pytest.raises(EntidadNoEncontradaError):
+            orden_service.consultar_orden(
+                "OM-001"
+            )
+
+    def test_asignar_tecnico_orden_no_existente_es_invalido(
+        self, orden_service
+    ):
+        orden_service._dao.buscar_por_id.return_value = None
+
+        with pytest.raises(EntidadNoEncontradaError):
+            orden_service.asignar_tecnico(
+                "OM-001",
+                "TEC-001"
+            )
+
+    def test_asignar_tecnico_no_existente_es_invalido(
+        self, orden_service
+    ):
+        orden_service._dao.buscar_por_id.return_value = {
+            "id_orden": "OM-001",
+            "id_equipo": "EQ-001"
+        }
+
+        orden_service._tecnico_dao.buscar_por_id.return_value = None
+
+        with pytest.raises(EntidadNoEncontradaError):
+            orden_service.asignar_tecnico(
+                "OM-001",
+                "TEC-001"
+            )
+
+    def test_asignar_tecnico_equipo_vinculado_no_existente_es_invalido(
+        self, 
+        orden_service,
+        tecnico_activo_electricista_nivel2
+    ):
+        orden_service._dao.buscar_por_id.return_value = {
+            "id_orden": "OM-001",
+            "id_equipo": "EQ-001",
+        }
+
+        orden_service._tecnico_dao.buscar_por_id.return_value = (
+            tecnico_activo_electricista_nivel2
+        )
+
+        orden_service._equipo_dao.buscar_por_id.return_value = None
+
+        with pytest.raises(EntidadNoEncontradaError):
+            orden_service.asignar_tecnico(
+                "OM-001",
+                "TEC-001"
+            )
+

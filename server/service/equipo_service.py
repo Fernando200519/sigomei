@@ -56,18 +56,9 @@ class EquipoService:
             "estado_operativo":  estado_operativo,
             "criticidad":        criticidad,
         }
-        try:
-            return self._dao.insertar(datos)
 
-        except UniqueViolation:
-            raise EntidadDuplicadaError(
-                f"Ya existe un equipo con número de serie '{numero_serie}'"
-            )
-
-        except CheckViolation as e:
-            raise ReglaNegocioError(
-                f"Datos inválidos del equipo: {e}"
-            )
+        return self._dao.insertar(datos)
+        
     def consultar_equipo(self, id_equipo: str) -> dict:
         equipo = self._dao.buscar_por_id(id_equipo)
         if not equipo:

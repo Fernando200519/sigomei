@@ -6,7 +6,7 @@ RN-08: Transiciones permitidas:
 """
 
 import pytest
-from server.exceptions.exceptions import EstadoInvalidoError
+from server.exceptions.exceptions import EntidadNoEncontradaError, EstadoInvalidoError
 
 
 class TestRN08TransicionesEstado:
@@ -90,3 +90,40 @@ class TestRN08TransicionesEstado:
 
         with pytest.raises(EstadoInvalidoError):
             orden_service.cancelar_orden("OM-056")
+    
+    def test_iniciar_ejecucion_orden_no_existente_es_invalido(
+        self, 
+        orden_service
+    ):
+        orden_service._dao.buscar_por_id.return_value = None
+
+        with pytest.raises(EntidadNoEncontradaError):
+            orden_service.iniciar_ejecucion(
+                "OM-001",
+                "2026-05-24"
+            )
+
+
+    def test_finalizar_orden_no_existente_es_invalido(
+        self, orden_service
+    ):
+        orden_service._dao.buscar_por_id.return_value = None
+
+        with pytest.raises(EntidadNoEncontradaError):
+            orden_service.finalizar_orden(
+                "OM-001",
+                "2026-05-25",
+                1500.0
+            )
+
+
+    def test_cancelar_orden_no_existente_es_invalido(
+        self, orden_service
+    ):
+        orden_service._dao.buscar_por_id.return_value = None
+
+        with pytest.raises(EntidadNoEncontradaError):
+            orden_service.cancelar_orden(
+                "OM-001"
+            )
+

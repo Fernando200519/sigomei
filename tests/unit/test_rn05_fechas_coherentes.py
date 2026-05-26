@@ -2,8 +2,11 @@
 RN-05: fecha_cierre >= fecha_inicio >= fecha_programada
 """
 
+from datetime import date
+
 import pytest
 from server.exceptions.exceptions import ReglaNegocioError
+from server.service.orden_service import _parse_fecha
 
 
 class TestRN05FechasCoherentes:
@@ -59,3 +62,10 @@ class TestRN05FechasCoherentes:
 
         resultado = orden_service.finalizar_orden("OM-022", "2026-06-10", 3000.0)
         assert resultado is True
+
+    def test_parse_fecha_con_date_retorna_mismo_objeto(self):
+        fecha = date(2026, 5, 24)
+
+        resultado = _parse_fecha(fecha)
+
+        assert resultado == fecha

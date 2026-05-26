@@ -1,5 +1,3 @@
-
-
 class TestTC_SIS_01_Autenticacion:
     """
     TC-SIS-01: Inicio de sesión exitoso con credenciales válidas.
