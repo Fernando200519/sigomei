@@ -73,3 +73,16 @@ class TecnicoDAO:
             with conn.cursor() as cur:
                 cur.execute(sql, (rfc,))
                 return cur.fetchone() is not None
+    
+    def listar_todos(self) -> list:
+        """Consulta la base de datos y devuelve todos los técnicos registrados."""
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT id_tecnico, nombre_completo, especialidad, nivel_certificacion, estatus 
+                    FROM tecnicos;
+                """)
+                
+                registros = cur.fetchall()
+                
+                return [dict(fila) for fila in registros]

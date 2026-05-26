@@ -65,3 +65,16 @@ class EquipoDAO:
             with conn.cursor() as cur:
                 cur.execute(sql, (id_equipo,))
                 return cur.fetchone() is not None
+    
+    def listar_todos(self) -> list:
+        """Consulta la base de datos y devuelve todos los equipos registrados."""
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT id_equipo, nombre, tipo, ubicacion_planta, estado_operativo, criticidad 
+                    FROM equipos;
+                """)
+                
+                registros = cur.fetchall()
+                
+                return [dict(fila) for fila in registros]

@@ -76,16 +76,6 @@ SERVER_OBJECT_ID=sigomei.controller
 
 PostgreSQL requiere que los datos y los scripts se manejen en UTF-8. Si estás en Windows, la consola suele usar cp1252 por defecto, lo que corromperá los caracteres acentuados (é, ó) y hará que fallen las reglas de negocio.
 
-### 3.1 Preparar la terminal (Solo Windows — Obligatorio)
-
-```bash
-# Cambiar el mapa de caracteres de la consola a UTF-8
-chcp 65001
-
-# Forzar al cliente de PostgreSQL a usar UTF-8
-$env:PGCLIENTENCODING="utf-8"
-```
-
 ### 3.2 Crear la base de datos
 
 Crea el contenedor de datos asegurando el encoding de forma explícita:
@@ -94,8 +84,8 @@ Crea el contenedor de datos asegurando el encoding de forma explícita:
 # Elimina la base de datos si ya existía un intento previo
 psql -U postgres -c "DROP DATABASE IF EXISTS sigomei_db;"
 
-# Crea la base de datos limpia en formato UTF8
-psql -U postgres -c "CREATE DATABASE sigomei_db WITH ENCODING 'UTF8';"
+# Crea la base de datos limpia
+psql -U postgres -c "CREATE DATABASE sigomei_db';"
 ```
 
 ### 3.3 Crear las tablas (Esquema)
@@ -128,15 +118,25 @@ Deberías ver una tabla limpia con 6 equipos de prueba. Nota: La aplicación ya 
 
 ## 4. Ejecutar la suite de pruebas (Ciclo TDD en VERDE)
 
-Con el entorno virtual activo y desde la raíz del proyecto, ejecuta pytest. Como la lógica ya ha sido implementada, **todas las pruebas deben pasar exitosamente**.
+Con el entorno virtual activo y desde la raíz del proyecto, la suite de pruebas está dividida en dos categorías primordiales: Pruebas Unitarias y Pruebas de Sistema.
+
+### 4.1 Pruebas Unitarias (Aisladas con Mocks)
+
+Validan la lógica de negocio y los servicios de forma aislada. Como utilizan simuladores, pasarán exitosamente incluso si el servidor o la base de datos están completamente apagados.
 
 ```bash
-pytest tests/ -v
+pytest tests/unit -v
 ```
 
-> 💡 **Nota:** Las pruebas unitarias de los servicios utilizan _mocks_ (simuladores), lo que significa que puedes ejecutarlas y pasarán a verde incluso si el servidor o la base de datos están completamente apagados.
+### 4.2 Pruebas de Sistema (End-to-End)
 
-Salida esperada al final de la consola:
+Validan flujos completos de integración, autenticación y persistencia real en el sistema.
+
+```bash
+pytest tests/system -v
+```
+
+Salida esperada al finalizar la ejecución exitosa de los tests unitarios:
 
 ```text
 ============================== 26 passed in 0.xx s ==============================

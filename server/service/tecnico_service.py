@@ -76,3 +76,7 @@ class TecnicoService:
             )
 
         return self._dao.actualizar(id_tecnico, {"estatus": "Inactivo"})
+
+    def listar_tecnicos(self) -> list:
+        """Obtiene la lista completa de técnicos registrados sin filtros complejos."""
+        return self._dao.listar_todos()

@@ -97,3 +97,7 @@ class EquipoService:
             )
 
         return self._dao.eliminar(id_equipo)
+
+    def listar_equipos(self) -> list:
+        """Obtiene la lista completa de equipos registrados sin filtros complejos."""
+        return self._dao.listar_todos()
