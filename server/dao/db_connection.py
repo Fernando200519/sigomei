@@ -14,11 +14,12 @@ def _get_config() -> dict:
     if missing:
         raise EnvironmentError(
             f"Faltan variables de entorno: {', '.join(missing)}\n"
+            f"Ruta buscada: {_ENV_PATH}\n"
             "Asegúrate de tener el archivo .env en la raíz del proyecto."
         )
     return {
         "host":     os.getenv("DB_HOST"),
-        "port":     int(os.getenv("DB_PORT", "5432")),
+        "port":     int(os.getenv("DB_PORT")),
         "dbname":   os.getenv("DB_NAME"),
         "user":     os.getenv("DB_USER"),
         "password": os.getenv("DB_PASSWORD"),
@@ -26,6 +27,8 @@ def _get_config() -> dict:
 
     }
 
-
 def get_connection():
-    return psycopg2.connect(**_get_config(), cursor_factory=RealDictCursor)
+    try:
+        return psycopg2.connect(**_get_config(), cursor_factory=RealDictCursor)
+    except psycopg2.OperationalError as e:
+        raise ConnectionError(f"No se pudo conectar a PostgreSQL: {e}") from None

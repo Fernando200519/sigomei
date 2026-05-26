@@ -4,12 +4,12 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-_ENV_PATH = Path(__file__).resolve().parents[3] / ".env"
+_ENV_PATH = Path(__file__).resolve().parents[2] / ".env"
 load_dotenv(dotenv_path=_ENV_PATH)
 
 _HOST      = os.getenv("SERVER_HOST")
 _PORT      = int(os.getenv("SERVER_PORT"))
-_OBJECT_ID = "sigomei.controller"
+_OBJECT_ID = os.getenv("SERVER_OBJECT_ID")
 
 class SigomeiProxy:
 
