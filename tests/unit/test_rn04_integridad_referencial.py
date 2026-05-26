@@ -1,6 +1,6 @@
 """
-RN-04: No se permite eliminar un Equipo o un Técnico
-        que tenga órdenes registradas.
+RN-04: No se permite eliminar un Equipo o un Tecnico
+        que tenga ordenes registradas.
 """
 
 import pytest
@@ -11,7 +11,7 @@ class TestRN04IntegridadReferencial:
 
     def test_baja_equipo_con_ordenes_lanza_excepcion(self, equipo_service):
         """
-        DADO   un equipo que tiene órdenes de mantenimiento registradas
+        DADO   un equipo que tiene ordenes de mantenimiento registradas
         CUANDO se intenta darlo de baja
         ENTONCES debe lanzar IntegridadReferencialError
         """
@@ -23,9 +23,9 @@ class TestRN04IntegridadReferencial:
 
     def test_baja_equipo_sin_ordenes_es_exitosa(self, equipo_service):
         """
-        DADO   un equipo sin órdenes registradas
+        DADO   un equipo sin ordenes registradas
         CUANDO se intenta darlo de baja
-        ENTONCES debe retornar True sin lanzar excepción
+        ENTONCES debe retornar True sin lanzar excepcion
         """
         equipo_service._dao.buscar_por_id.return_value = {"id_equipo": "EQ-999"}
         equipo_service._dao.tiene_ordenes_vinculadas.return_value = False
@@ -36,7 +36,7 @@ class TestRN04IntegridadReferencial:
 
     def test_baja_tecnico_con_ordenes_activas_lanza_excepcion(self, tecnico_service):
         """
-        DADO   un técnico con órdenes en estados activos
+        DADO   un tecnico con ordenes en estados activos
         CUANDO se intenta darlo de baja
         ENTONCES debe lanzar IntegridadReferencialError
         """
@@ -48,9 +48,9 @@ class TestRN04IntegridadReferencial:
 
     def test_baja_tecnico_sin_ordenes_activas_es_exitosa(self, tecnico_service):
         """
-        DADO   un técnico sin órdenes activas
+        DADO   un tecnico sin ordenes activas
         CUANDO se intenta darlo de baja
-        ENTONCES debe retornar True sin lanzar excepción
+        ENTONCES debe retornar True sin lanzar excepcion
         """
         tecnico_service._dao.buscar_por_id.return_value = {"id_tecnico": "TEC-999"}
         tecnico_service._dao.tiene_ordenes_activas.return_value = False

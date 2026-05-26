@@ -2,7 +2,7 @@ import pytest
 
 @pytest.fixture
 def equipo_electrico_alta():
-    """Equipo de tipo Eléctrico con criticidad Alta."""
+    """Equipo de tipo Electrico con criticidad Alta."""
     return {
         "id_equipo": "EQ-001",
         "nombre": "Transformador T1",
@@ -19,7 +19,7 @@ def equipo_electrico_alta():
 
 @pytest.fixture
 def equipo_mecanico_baja():
-    """Equipo de tipo Mecánico con criticidad Baja."""
+    """Equipo de tipo Mecanico con criticidad Baja."""
     return {
         "id_equipo": "EQ-002",
         "nombre": "Bomba B2",
@@ -38,7 +38,7 @@ def equipo_mecanico_baja():
 def tecnico_activo_electricista_nivel1():
     return {
         "id_tecnico": "TEC-001",
-        "nombre_completo": "Carlos López",
+        "nombre_completo": "Carlos Lopez",
         "rfc": "LOCA800101AAA",
         "telefono": "9211234567",
         "correo": "carlos@sigomei.mx",
@@ -53,7 +53,7 @@ def tecnico_activo_electricista_nivel1():
 def tecnico_activo_electricista_nivel2():
     return {
         "id_tecnico": "TEC-002",
-        "nombre_completo": "Ana Pérez",
+        "nombre_completo": "Ana Perez",
         "rfc": "PEAA900202BBB",
         "telefono": "9219876543",
         "correo": "ana@sigomei.mx",

@@ -19,6 +19,13 @@ from server.exceptions.exceptions import (
 
 # El cliente necesita el mismo mapeo que el servidor para deserializar
 _EXCEPCIONES_SIGOMEI = {
+    "EntidadDuplicadaError":      EntidadDuplicadaError,
+    "EntidadNoEncontradaError":   EntidadNoEncontradaError,
+    "ReglaNegocioError":          ReglaNegocioError,
+    "IntegridadReferencialError": IntegridadReferencialError,
+    "EstadoInvalidoError":        EstadoInvalidoError,
+    "AutenticacionError":         AutenticacionError,
+    # Mantener también las rutas completas por si acaso
     "server.exceptions.exceptions.EntidadDuplicadaError":      EntidadDuplicadaError,
     "server.exceptions.exceptions.EntidadNoEncontradaError":   EntidadNoEncontradaError,
     "server.exceptions.exceptions.ReglaNegocioError":          ReglaNegocioError,
@@ -36,7 +43,7 @@ for _nombre, _cls in _EXCEPCIONES_SIGOMEI.items():
     register_dict_to_class(_nombre, _hacer_reconstructor(_cls))
 
 def _esperar_puerto(host: str, puerto: int, timeout: float = 5.0):
-    """Bloquea la ejecución hasta que el servidor RMI esté escuchando en el puerto."""
+    """Bloquea la ejecucion hasta que el servidor RMI este escuchando en el puerto."""
     tiempo_inicio = time.time()
     while True:
         try:
@@ -45,7 +52,7 @@ def _esperar_puerto(host: str, puerto: int, timeout: float = 5.0):
         except (ConnectionRefusedError, socket.timeout):
             if time.time() - tiempo_inicio > timeout:
                 raise RuntimeError(
-                    f"El servidor SIGOMEI no levantó en el puerto {puerto} a tiempo."
+                    f"El servidor SIGOMEI no levanto en el puerto {puerto} a tiempo."
                 )
             time.sleep(0.5)
 
@@ -54,7 +61,7 @@ def _esperar_puerto(host: str, puerto: int, timeout: float = 5.0):
 def gestionar_servidor_sigomei():
     """
     DADO que se van a ejecutar las pruebas de sistema,
-    CUANDO pytest inicia la sesión, levanta automáticamente el servidor.
+    CUANDO pytest inicia la sesion, levanta automaticamente el servidor.
     ENTONCES ejecuta los tests y al finalizar apaga el servidor por completo.
     """
     print("\n[INFO] Levantando el servidor SIGOMEI para pruebas de sistema...")
@@ -76,7 +83,7 @@ def gestionar_servidor_sigomei():
         stderr_output = proceso_servidor.stderr.read() if proceso_servidor.stderr else "sin salida"
         proceso_servidor.kill()
         raise RuntimeError(
-            f"El servidor SIGOMEI no levantó en el puerto 9090.\n"
+            f"El servidor SIGOMEI no levanto en el puerto 9090.\n"
             f"--- STDERR del servidor ---\n{stderr_output}"
         )
 
@@ -89,18 +96,57 @@ def gestionar_servidor_sigomei():
     try:
         proceso_servidor.wait(timeout=3.0)
     except subprocess.TimeoutExpired:
-        print("[WARN] El servidor tardó demasiado en cerrar, forzando kill...")
+        print("[WARN] El servidor tardo demasiado en cerrar, forzando kill...")
         proceso_servidor.kill()
 
     print("[INFO] Servidor SIGOMEI cerrado limpiamente.")
 
 
+# ── Wrapper que convierte el fallback de Pyro5 al tipo SIGOMEI correcto ──────
+class _SigomeiProxy:
+    """
+    Pyro5 no puede reconstruir excepciones custom en el cliente y hace fallback
+    al builtin padre (ReglaNegocioError → PermissionError, etc.).
+    Este wrapper intercepta la llamada y re-lanza con el tipo correcto,
+    detectando el nombre de la clase en el prefijo del mensaje.
+    """
+    _MAPA = {
+        "EntidadDuplicadaError":      EntidadDuplicadaError,
+        "EntidadNoEncontradaError":   EntidadNoEncontradaError,
+        "ReglaNegocioError":          ReglaNegocioError,
+        "IntegridadReferencialError": IntegridadReferencialError,
+        "EstadoInvalidoError":        EstadoInvalidoError,
+        "AutenticacionError":         AutenticacionError,
+    }
+
+    def __init__(self, proxy):
+        self._proxy = proxy
+
+    def __getattr__(self, nombre):
+        attr = getattr(self._proxy, nombre)
+        if not callable(attr):
+            return attr
+
+        def _llamada(*args, **kwargs):
+            try:
+                return attr(*args, **kwargs)
+            except Exception as e:
+                msg = str(e)
+                for nombre_exc, cls_exc in self._MAPA.items():
+                    prefijo = nombre_exc + ":"
+                    if msg.startswith(prefijo) or msg == nombre_exc:
+                        detalle = msg[len(prefijo):].strip() if msg.startswith(prefijo) else ""
+                        raise cls_exc(detalle) from None
+                raise
+        return _llamada
+
+
 @pytest.fixture(scope="session")
 def rmi_registry():
-    """Conexión base al servidor/registro RMI de SIGOMEI."""
+    """Conexion base al servidor/registro RMI de SIGOMEI."""
     uri = "PYRO:sigomei.controller@localhost:9090"
-    with Proxy(uri) as proxy:  # ← Proxy importado desde Pyro5.api
-        yield proxy
+    with Proxy(uri) as proxy:
+        yield _SigomeiProxy(proxy)   # ← envuelto en el proxy traductor
 
 @pytest.fixture(scope="function")
 def db_test():
@@ -112,5 +158,5 @@ def db_test():
             cursor.execute("DELETE FROM tecnicos")
             cursor.execute("DELETE FROM equipos")
         connection.commit()
-    # yield sin valor: el test no necesita la conexión, solo la limpieza
+    # yield sin valor: el test no necesita la conexion, solo la limpieza
     yield

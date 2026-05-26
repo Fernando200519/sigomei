@@ -1,6 +1,6 @@
 """
-RN-07: Los equipos de criticidad 'Alta' requieren técnicos
-        con nivel de certificación II o III.
+RN-07: Los equipos de criticidad 'Alta' requieren tecnicos
+        con nivel de certificacion II o III.
 """
 
 import pytest
@@ -14,7 +14,7 @@ class TestRN07CriticidadAlta:
     ):
         """
         DADO   una orden para un equipo con criticidad 'Alta'
-        CUANDO se asigna un técnico con nivel de certificación I
+        CUANDO se asigna un tecnico con nivel de certificacion I
         ENTONCES debe lanzar ReglaNegocioError
         """
         tecnico_nivel1 = {
@@ -40,7 +40,7 @@ class TestRN07CriticidadAlta:
     ):
         """
         DADO   una orden para un equipo con criticidad 'Alta'
-        CUANDO se asigna un técnico con nivel de certificación II
+        CUANDO se asigna un tecnico con nivel de certificacion II
         ENTONCES debe asignarse correctamente sin error
         """
         orden_service._dao.buscar_por_id.return_value = {
@@ -62,8 +62,8 @@ class TestRN07CriticidadAlta:
     ):
         """
         DADO   una orden para un equipo con criticidad 'Baja'
-        CUANDO se asigna un técnico con nivel de certificación I
-        ENTONCES debe ser válido (RN-07 no aplica)
+        CUANDO se asigna un tecnico con nivel de certificacion I
+        ENTONCES debe ser valido (RN-07 no aplica)
         """
         tecnico_mecanico_nivel1 = {
             "id_tecnico": "TEC-011",

@@ -1,5 +1,5 @@
 """
-RN-06: Solo las órdenes en estado 'Finalizada' deben tener
+RN-06: Solo las ordenes en estado 'Finalizada' deben tener
         costo_real y fecha_cierre registrados.
         → Finalizar sin costo_real o sin fecha_cierre debe fallar.
 """
@@ -18,7 +18,7 @@ class TestRN06CamposEstadoFinalizada:
         """
         orden_service._dao.buscar_por_id.return_value = {
             "id_orden": "OM-030",
-            "estado_orden": "En Ejecucion",
+            "estado_orden": "En ejecucion",
             "fecha_programada": "2026-05-01",
             "fecha_inicio": "2026-05-05",
             "id_tecnico": "TEC-002",
@@ -35,7 +35,7 @@ class TestRN06CamposEstadoFinalizada:
         """
         orden_service._dao.buscar_por_id.return_value = {
             "id_orden": "OM-031",
-            "estado_orden": "En Ejecucion",
+            "estado_orden": "En ejecucion",
             "fecha_programada": "2026-05-01",
             "fecha_inicio": "2026-05-05",
             "id_tecnico": "TEC-002",
@@ -52,7 +52,7 @@ class TestRN06CamposEstadoFinalizada:
         """
         orden_service._dao.buscar_por_id.return_value = {
             "id_orden": "OM-032",
-            "estado_orden": "En Ejecucion",
+            "estado_orden": "En ejecucion",
             "fecha_programada": "2026-05-01",
             "fecha_inicio": "2026-05-05",
             "id_tecnico": "TEC-002",

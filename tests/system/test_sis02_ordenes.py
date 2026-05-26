@@ -21,19 +21,19 @@ EQUIPO_ALTA_CRITICIDAD = dict(
 )
 
 TECNICO_MECANICO_C1 = dict(
-    id_tecnico="TEC-001", nombre_completo="Juan Pérez",
+    id_tecnico="TEC-001", nombre_completo="Juan Perez",
     rfc="PEJA850101AAA", telefono="9210001001",
     correo="juan@sigomei.mx", especialidad="Mecanico",
     nivel_certificacion="I", fecha_ingreso="2022-01-01", estatus="Activo",
 )
 TECNICO_MECANICO_C2 = dict(
-    id_tecnico="TEC-002", nombre_completo="Carlos López",
+    id_tecnico="TEC-002", nombre_completo="Carlos Lopez",
     rfc="LOCC850101BBB", telefono="9210001002",
     correo="carlos@sigomei.mx", especialidad="Mecanico",
     nivel_certificacion="II", fecha_ingreso="2022-01-01", estatus="Activo",
 )
 TECNICO_ELECTRICO_C2 = dict(
-    id_tecnico="TEC-003", nombre_completo="María García",
+    id_tecnico="TEC-003", nombre_completo="Maria Garcia",
     rfc="GAMA900101CCC", telefono="9210001003",
     correo="maria@sigomei.mx", especialidad="Electrico",
     nivel_certificacion="II", fecha_ingreso="2022-01-01", estatus="Activo",
@@ -45,10 +45,10 @@ class TestTC_SIS_02_TableroPorEstado:
 
     def test_sis02_tablero_muestra_ordenes_programada_y_en_ejecucion(self, rmi_registry, db_test):
         """
-        DADO al menos 2 órdenes en estado Programada y 2 en estado En ejecucion
-        CUANDO el Supervisor navega al tablero de órdenes
-        ENTONCES se muestran ambos grupos con número, fechas, descripción,
-        equipo y técnico de cada orden.
+        DADO al menos 2 ordenes en estado Programada y 2 en estado En ejecucion
+        CUANDO el Supervisor navega al tablero de ordenes
+        ENTONCES se muestran ambos grupos con numero, fechas, descripcion,
+        equipo y tecnico de cada orden.
         """
         rmi_registry.alta_equipo(**EQUIPO_MECANICO)
         rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)
@@ -58,7 +58,7 @@ class TestTC_SIS_02_TableroPorEstado:
                 id_orden=f"ORD-00{i}", id_equipo="EQ-001",
                 tipo_mantenimiento="Preventivo",
                 fecha_programada=f"2026-06-{10 + i:02d}",
-                descripcion_trabajo=f"Revisión {i}",
+                descripcion_trabajo=f"Revision {i}",
                 costo_estimado=1000.0,
             )
             rmi_registry.asignar_tecnico(f"ORD-00{i}", "TEC-002")
@@ -68,7 +68,7 @@ class TestTC_SIS_02_TableroPorEstado:
         rmi_registry.iniciar_ejecucion("ORD-002", "2026-06-12")
 
         programadas  = rmi_registry.listar_ordenes_por_filtro({"estado_orden": "Programada"})
-        en_ejecucion = rmi_registry.listar_ordenes_por_filtro({"estado_orden": "En Ejecucion"})
+        en_ejecucion = rmi_registry.listar_ordenes_por_filtro({"estado_orden": "En ejecucion"})
 
         assert len(programadas)  >= 2
         assert len(en_ejecucion) >= 2
@@ -83,7 +83,7 @@ class TestTC_SIS_03_CrearOrdenExitosa:
 
     def test_sis03_crear_orden_campos_completos(self, rmi_registry, db_test):
         """
-        DADO equipo Activo Bomba-01 y técnico Mecanico Activo
+        DADO equipo Activo Bomba-01 y tecnico Mecanico Activo
         CUANDO se crea una orden con todos los campos obligatorios
         ENTONCES la orden queda en estado Programada y aparece en el tablero.
         """
@@ -94,7 +94,7 @@ class TestTC_SIS_03_CrearOrdenExitosa:
             id_orden="ORD-001", id_equipo="EQ-001",
             tipo_mantenimiento="Preventivo",
             fecha_programada="2026-06-10",
-            descripcion_trabajo="Revisión de sellos",
+            descripcion_trabajo="Revision de sellos",
             costo_estimado=1500.0,
         )
         rmi_registry.asignar_tecnico("ORD-001", "TEC-002")
@@ -109,9 +109,9 @@ class TestTC_SIS_04_EspecialidadIncompatible:
 
     def test_sis04_crear_orden_especialidad_tecnico_no_coincide(self, rmi_registry, db_test):
         """
-        DADO equipo tipo Electrico y técnico con especialidad Mecanico
-        CUANDO se intenta asignar el técnico a la orden
-        ENTONCES el sistema rechaza la operación con ReglaNegocioError.
+        DADO equipo tipo Electrico y tecnico con especialidad Mecanico
+        CUANDO se intenta asignar el tecnico a la orden
+        ENTONCES el sistema rechaza la operacion con ReglaNegocioError.
         """
         rmi_registry.alta_equipo(**EQUIPO_ELECTRICO)
         rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)
@@ -120,7 +120,7 @@ class TestTC_SIS_04_EspecialidadIncompatible:
             id_orden="ORD-001", id_equipo="EQ-002",
             tipo_mantenimiento="Preventivo",
             fecha_programada="2026-06-10",
-            descripcion_trabajo="Revisión eléctrica",
+            descripcion_trabajo="Revision electrica",
             costo_estimado=2000.0,
         )
 
@@ -133,9 +133,9 @@ class TestTC_SIS_05_CriticidadAltaCertificacionInsuficiente:
 
     def test_sis05_equipo_criticidad_alta_requiere_certificacion_ii_o_iii(self, rmi_registry, db_test):
         """
-        DADO equipo de criticidad Alta y técnico con certificación I
-        CUANDO se intenta guardar la asignación
-        ENTONCES el sistema la rechaza indicando que se requiere certificación II o III.
+        DADO equipo de criticidad Alta y tecnico con certificacion I
+        CUANDO se intenta guardar la asignacion
+        ENTONCES el sistema la rechaza indicando que se requiere certificacion II o III.
         """
         rmi_registry.alta_equipo(**EQUIPO_ALTA_CRITICIDAD)
         rmi_registry.alta_tecnico(**TECNICO_MECANICO_C1)  # Cert. I
@@ -144,7 +144,7 @@ class TestTC_SIS_05_CriticidadAltaCertificacionInsuficiente:
             id_orden="ORD-001", id_equipo="EQ-003",
             tipo_mantenimiento="Preventivo",
             fecha_programada="2026-06-10",
-            descripcion_trabajo="Revisión compresor",
+            descripcion_trabajo="Revision compresor",
             costo_estimado=3000.0,
         )
 
@@ -159,7 +159,7 @@ class TestTC_SIS_06_OrdenDuplicadaMismaFecha:
         """
         DADO equipo Bomba-01 con orden activa para 2026-06-10
         CUANDO se intenta crear otra orden para el mismo equipo y fecha
-        ENTONCES el sistema rechaza la operación.
+        ENTONCES el sistema rechaza la operacion.
         """
         rmi_registry.alta_equipo(**EQUIPO_MECANICO)
 
@@ -191,7 +191,7 @@ class TestTC_SIS_07_TransicionProgramadaEnEjecucionSupervisor:
         rmi_registry.crear_orden(
             id_orden="ORD-001", id_equipo="EQ-001",
             tipo_mantenimiento="Preventivo", fecha_programada="2026-06-10",
-            descripcion_trabajo="Revisión de sellos", costo_estimado=1500.0,
+            descripcion_trabajo="Revision de sellos", costo_estimado=1500.0,
         )
         rmi_registry.asignar_tecnico("ORD-001", "TEC-002")
 
@@ -208,9 +208,9 @@ class TestTC_SIS_08_TransicionProgramadaEnEjecucionTecnico:
 
     def test_sis08_tecnico_cambia_orden_a_en_ejecucion(self, rmi_registry, db_test):
         """
-        DADO orden ORD-002 en estado Programada asignada al Técnico
-        CUANDO el Técnico inicia la orden
-        ENTONCES el estado cambia a En ejecucion (acción permitida para rol Técnico).
+        DADO orden ORD-002 en estado Programada asignada al Tecnico
+        CUANDO el Tecnico inicia la orden
+        ENTONCES el estado cambia a En ejecucion (accion permitida para rol Tecnico).
         """
         rmi_registry.alta_equipo(**EQUIPO_MECANICO)
         rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)
@@ -243,7 +243,7 @@ class TestTC_SIS_10_SupervisorCierraOrden:
         rmi_registry.crear_orden(
             id_orden="ORD-003", id_equipo="EQ-001",
             tipo_mantenimiento="Preventivo", fecha_programada="2026-06-12",
-            descripcion_trabajo="Revisión de válvulas", costo_estimado=1500.0,
+            descripcion_trabajo="Revision de valvulas", costo_estimado=1500.0,
         )
         rmi_registry.asignar_tecnico("ORD-003", "TEC-002")
         rmi_registry.iniciar_ejecucion("ORD-003", "2026-06-12")
@@ -265,14 +265,14 @@ class TestTC_SIS_11_CierreOrdenSinCostoReal:
         """
         DADO orden ORD-004 en estado En ejecucion
         CUANDO el Supervisor intenta finalizarla sin ingresar costo real
-        ENTONCES el sistema muestra error de validación y la orden permanece En ejecucion.
+        ENTONCES el sistema muestra error de validacion y la orden permanece En ejecucion.
         """
         rmi_registry.alta_equipo(**EQUIPO_MECANICO)
         rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)
         rmi_registry.crear_orden(
             id_orden="ORD-004", id_equipo="EQ-001",
             tipo_mantenimiento="Correctivo", fecha_programada="2026-06-13",
-            descripcion_trabajo="Reparación de bomba", costo_estimado=2000.0,
+            descripcion_trabajo="Reparacion de bomba", costo_estimado=2000.0,
         )
         rmi_registry.asignar_tecnico("ORD-004", "TEC-002")
         rmi_registry.iniciar_ejecucion("ORD-004", "2026-06-13")
@@ -298,7 +298,7 @@ class TestTC_SIS_12_CancelarOrdenProgramada:
         rmi_registry.crear_orden(
             id_orden="ORD-005", id_equipo="EQ-001",
             tipo_mantenimiento="Preventivo", fecha_programada="2026-06-15",
-            descripcion_trabajo="Revisión preventiva", costo_estimado=1000.0,
+            descripcion_trabajo="Revision preventiva", costo_estimado=1000.0,
         )
 
         resultado = rmi_registry.cancelar_orden("ORD-005")
@@ -314,9 +314,9 @@ class TestTC_SIS_18_TecnicoConOrdenActivaAsignacion:
 
     def test_sis18_tecnico_con_orden_en_ejecucion_no_puede_asignarse(self, rmi_registry, db_test):
         """
-        DADO técnico María García con una orden activa En ejecucion
+        DADO tecnico Maria Garcia con una orden activa En ejecucion
         CUANDO se intenta asignarla a otra orden nueva
-        ENTONCES el sistema rechaza la asignación.
+        ENTONCES el sistema rechaza la asignacion.
         """
         rmi_registry.alta_equipo(**EQUIPO_ELECTRICO)
         rmi_registry.alta_tecnico(**TECNICO_ELECTRICO_C2)
@@ -324,7 +324,7 @@ class TestTC_SIS_18_TecnicoConOrdenActivaAsignacion:
         rmi_registry.crear_orden(
             id_orden="ORD-ACT", id_equipo="EQ-002",
             tipo_mantenimiento="Correctivo", fecha_programada="2026-06-10",
-            descripcion_trabajo="Falla eléctrica", costo_estimado=1500.0,
+            descripcion_trabajo="Falla electrica", costo_estimado=1500.0,
         )
         rmi_registry.asignar_tecnico("ORD-ACT", "TEC-003")
         rmi_registry.iniciar_ejecucion("ORD-ACT", "2026-06-10")
@@ -338,7 +338,7 @@ class TestTC_SIS_18_TecnicoConOrdenActivaAsignacion:
         rmi_registry.crear_orden(
             id_orden="ORD-NEW", id_equipo="EQ-004",
             tipo_mantenimiento="Preventivo", fecha_programada="2026-06-20",
-            descripcion_trabajo="Revisión panel", costo_estimado=700.0,
+            descripcion_trabajo="Revision panel", costo_estimado=700.0,
         )
 
         with pytest.raises(ReglaNegocioError):
@@ -350,9 +350,9 @@ class TestTC_SIS_19_HistoricoFiltroEquipo:
 
     def test_sis19_historico_filtrado_por_equipo(self, rmi_registry, db_test):
         """
-        DADO órdenes finalizadas asociadas a Bomba-01 y a otros equipos
-        CUANDO se aplica filtro por equipo Bomba-01 en el histórico
-        ENTONCES solo se muestran órdenes de ese equipo.
+        DADO ordenes finalizadas asociadas a Bomba-01 y a otros equipos
+        CUANDO se aplica filtro por equipo Bomba-01 en el historico
+        ENTONCES solo se muestran ordenes de ese equipo.
         """
         rmi_registry.alta_equipo(**EQUIPO_MECANICO)
         rmi_registry.alta_equipo(**EQUIPO_ELECTRICO)
@@ -366,7 +366,7 @@ class TestTC_SIS_19_HistoricoFiltroEquipo:
                 id_orden=f"ORD-H0{i}", id_equipo=eq,
                 tipo_mantenimiento="Preventivo",
                 fecha_programada=f"2026-01-{i:02d}",
-                descripcion_trabajo="Histórico", costo_estimado=500.0,
+                descripcion_trabajo="Historico", costo_estimado=500.0,
             )
             rmi_registry.asignar_tecnico(f"ORD-H0{i}", tec)
             rmi_registry.iniciar_ejecucion(f"ORD-H0{i}", f"2026-01-{i:02d}")
@@ -386,9 +386,9 @@ class TestTC_SIS_19_HistoricoFiltroEquipo:
 
 #     def test_sis20_historico_filtrado_por_rango_de_fechas(self, rmi_registry, db_test):
 #         """
-#         DADO órdenes finalizadas en distintas fechas
+#         DADO ordenes finalizadas en distintas fechas
 #         CUANDO se aplica filtro con rango 2026-01-01 a 2026-03-31
-#         ENTONCES solo se retornan órdenes cuya fecha cae dentro del rango.
+#         ENTONCES solo se retornan ordenes cuya fecha cae dentro del rango.
 #         """
 #         rmi_registry.alta_equipo(**EQUIPO_MECANICO)
 #         rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)
@@ -402,7 +402,7 @@ class TestTC_SIS_19_HistoricoFiltroEquipo:
 #             rmi_registry.crear_orden(
 #                 id_orden=id_orden, id_equipo="EQ-001",
 #                 tipo_mantenimiento="Preventivo", fecha_programada=f_prog,
-#                 descripcion_trabajo="Revisión", costo_estimado=500.0,
+#                 descripcion_trabajo="Revision", costo_estimado=500.0,
 #             )
 #             rmi_registry.asignar_tecnico(id_orden, "TEC-002")
 #             rmi_registry.iniciar_ejecucion(id_orden, f_prog)
@@ -423,9 +423,9 @@ class TestTC_SIS_22_CostoEstimadoNegativo:
 
     def test_sis22_costo_estimado_negativo_rechazado(self, rmi_registry, db_test):
         """
-        DADO una nueva orden en creación
+        DADO una nueva orden en creacion
         CUANDO se ingresa costo estimado -500.00
-        ENTONCES el sistema muestra error de validación y la orden no se guarda.
+        ENTONCES el sistema muestra error de validacion y la orden no se guarda.
         """
         rmi_registry.alta_equipo(**EQUIPO_MECANICO)
 
@@ -434,7 +434,7 @@ class TestTC_SIS_22_CostoEstimadoNegativo:
                 id_orden="ORD-NEG", id_equipo="EQ-001",
                 tipo_mantenimiento="Preventivo",
                 fecha_programada="2026-06-20",
-                descripcion_trabajo="Revisión",
+                descripcion_trabajo="Revision",
                 costo_estimado=-500.0,
             )
 
@@ -453,7 +453,7 @@ class TestTC_SIS_23_FechaCierreAnteriorFechaInicio:
         rmi_registry.crear_orden(
             id_orden="ORD-006", id_equipo="EQ-001",
             tipo_mantenimiento="Preventivo", fecha_programada="2026-05-10",
-            descripcion_trabajo="Revisión de sellos", costo_estimado=800.0,
+            descripcion_trabajo="Revision de sellos", costo_estimado=800.0,
         )
         rmi_registry.asignar_tecnico("ORD-006", "TEC-002")
         rmi_registry.iniciar_ejecucion("ORD-006", "2026-05-10")
@@ -467,14 +467,14 @@ class TestTC_SIS_24_ReasignacionTecnico:
 
     def test_sis24_reasignar_tecnico_en_orden_programada(self, rmi_registry, db_test):
         """
-        DADO orden ORD-007 en estado Programada asignada a Carlos López
-        CUANDO el Supervisor reasigna a Pedro Sánchez (misma especialidad)
-        ENTONCES la orden queda asignada al nuevo técnico y el cambio se persiste.
+        DADO orden ORD-007 en estado Programada asignada a Carlos Lopez
+        CUANDO el Supervisor reasigna a Pedro Sanchez (misma especialidad)
+        ENTONCES la orden queda asignada al nuevo tecnico y el cambio se persiste.
         """
         rmi_registry.alta_equipo(**EQUIPO_MECANICO)
-        rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)  # Carlos López
+        rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)  # Carlos Lopez
         rmi_registry.alta_tecnico(
-            id_tecnico="TEC-PED", nombre_completo="Pedro Sánchez",
+            id_tecnico="TEC-PED", nombre_completo="Pedro Sanchez",
             rfc="SAPE900101DDD", telefono="9210005555",
             correo="pedro@sigomei.mx", especialidad="Mecanico",
             nivel_certificacion="II", fecha_ingreso="2023-06-01", estatus="Activo",
@@ -484,9 +484,9 @@ class TestTC_SIS_24_ReasignacionTecnico:
             tipo_mantenimiento="Preventivo", fecha_programada="2026-06-25",
             descripcion_trabajo="Mantenimiento mensual", costo_estimado=1300.0,
         )
-        rmi_registry.asignar_tecnico("ORD-007", "TEC-002")  # Carlos López
+        rmi_registry.asignar_tecnico("ORD-007", "TEC-002")  # Carlos Lopez
 
-        resultado = rmi_registry.asignar_tecnico("ORD-007", "TEC-PED")  # Pedro Sánchez
+        resultado = rmi_registry.asignar_tecnico("ORD-007", "TEC-PED")  # Pedro Sanchez
 
         assert resultado is True
         orden = rmi_registry.consultar_orden("ORD-007")

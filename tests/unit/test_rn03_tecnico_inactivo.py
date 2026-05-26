@@ -1,6 +1,6 @@
 """
-RN-03: Un técnico con estatus 'Inactivo' no puede ser
-        asignado a nuevas órdenes.
+RN-03: Un tecnico con estatus 'Inactivo' no puede ser
+        asignado a nuevas ordenes.
 """
 
 import pytest
@@ -13,7 +13,7 @@ class TestRN03TecnicoInactivo:
         self, orden_service, equipo_electrico_alta, tecnico_inactivo
     ):
         """
-        DADO   un técnico con estatus 'Inactivo'
+        DADO   un tecnico con estatus 'Inactivo'
         CUANDO se intenta asignarlo a una orden en estado 'Programada'
         ENTONCES debe lanzar ReglaNegocioError
         """
@@ -33,7 +33,7 @@ class TestRN03TecnicoInactivo:
         self, orden_service, equipo_electrico_alta, tecnico_activo_electricista_nivel2
     ):
         """
-        DADO   un técnico con estatus 'Activo' y especialidad correcta
+        DADO   un tecnico con estatus 'Activo' y especialidad correcta
         CUANDO se intenta asignarlo
         ENTONCES no debe lanzar ReglaNegocioError
         """

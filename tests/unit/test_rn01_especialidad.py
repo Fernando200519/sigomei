@@ -14,7 +14,7 @@ class TestRN01EspecialidadTecnico:
     ):
         """
         DADO   una orden vinculada a un equipo de tipo 'Eléctrico'
-        CUANDO se intenta asignar un técnico con especialidad 'Mecánico'
+        CUANDO se intenta asignar un técnico con especialidad 'Mecanico'
         ENTONCES debe lanzar ReglaNegocioError
         """
         orden_service._dao.buscar_por_id.return_value = {
@@ -34,7 +34,7 @@ class TestRN01EspecialidadTecnico:
     ):
         """
         DADO   una orden vinculada a un equipo de tipo 'Eléctrico'
-        CUANDO se asigna un técnico con especialidad 'Eléctrico' y certificación II
+        CUANDO se asigna un técnico con especialidad 'Eléctrico' y certificacion II
         ENTONCES NO debe lanzar ReglaNegocioError
         """
         orden_service._dao.buscar_por_id.return_value = {

@@ -8,7 +8,7 @@ class TestTC_SIS_13_RegistrarTecnico:
 
     def test_sis13_registrar_tecnico_campos_completos(self, rmi_registry, db_test):
         """
-        DADO que no existe técnico con RFC LOMA900101ABC
+        DADO que no existe tecnico con RFC LOMA900101ABC
         CUANDO se registra con todos los campos obligatorios
         ENTONCES queda registrado con estado activo y aparece en el listado.
         """
@@ -35,14 +35,14 @@ class TestTC_SIS_15_BajaTecnicoSinOrdenes:
 
     def test_sis15_baja_tecnico_aplica_borrado_logico(self, rmi_registry, db_test):
         """
-        DADO un técnico activo sin órdenes registradas
+        DADO un tecnico activo sin órdenes registradas
         CUANDO se solicita su baja
         ENTONCES queda inactivo en BD (borrado lógico),
         no se elimina físicamente y deja de aparecer disponible.
         """
         rmi_registry.alta_tecnico(
             id_tecnico        = "TEC-002",
-            nombre_completo   = "José Ramírez",
+            nombre_completo   = "Jose Ramírez",
             rfc               = "RAJM800101XYZ",
             telefono          = "9219876543",
             correo            = "jose@sigomei.mx",
@@ -64,12 +64,12 @@ class TestTC_SIS_16_BajaTecnicoConOrdenes:
 
     def test_sis16_baja_tecnico_con_ordenes_rechaza_eliminacion_fisica(self, rmi_registry, db_test):
         """
-        DADO un técnico Carlos López con al menos una orden en el histórico
+        DADO un tecnico Carlos López con al menos una orden en el histórico
         CUANDO se solicita su baja
         ENTONCES el sistema rechaza la eliminación física, aplica borrado lógico
-        y advierte que el técnico tiene órdenes en el histórico.
+        y advierte que el tecnico tiene órdenes en el histórico.
         """
-        # Precondición: técnico con orden finalizada en el histórico
+        # Precondición: tecnico con orden finalizada en el histórico
         rmi_registry.alta_equipo(
             id_equipo="EQ-001", nombre="Bomba-01", tipo="Mecanico",
             marca="Grundfos", modelo="CM5-5", numero_serie="NS-001",
@@ -94,7 +94,7 @@ class TestTC_SIS_16_BajaTecnicoConOrdenes:
 
         rmi_registry.baja_tecnico("TEC-003")
 
-        # # El técnico sigue existiendo en BD (no eliminado físicamente)
+        # # El tecnico sigue existiendo en BD (no eliminado físicamente)
         tecnico = rmi_registry.consultar_tecnico("TEC-003")
         assert tecnico is not None
         assert tecnico["estatus"].lower() == "inactivo"
@@ -105,7 +105,7 @@ class TestTC_SIS_17_TecnicoInactivoAsignacion:
 
     def test_sis17_tecnico_inactivo_no_puede_ser_asignado(self, rmi_registry, db_test):
         """
-        DADO un técnico con estado inactivo
+        DADO un tecnico con estado inactivo
         CUANDO se intenta asignarlo a una nueva orden
         ENTONCES no aparece disponible o el sistema lanza error de regla de negocio.
         """
@@ -116,7 +116,7 @@ class TestTC_SIS_17_TecnicoInactivoAsignacion:
             estado_operativo="Operativo", criticidad="Media",
         )
         rmi_registry.alta_tecnico(
-            id_tecnico="TEC-004", nombre_completo="José Ramírez",
+            id_tecnico="TEC-004", nombre_completo="Jose Ramírez",
             rfc="RAJM800202XYZ", telefono="9210003333",
             correo="jose2@sigomei.mx", especialidad="Mecanico",
             nivel_certificacion="I", fecha_ingreso="2024-01-01",
@@ -139,9 +139,9 @@ class TestTC_SIS_17_TecnicoInactivoAsignacion:
 
 #     def test_sis21_consulta_tecnicos_filtro_especialidad_certificacion(self, rmi_registry, db_test):
 #         """
-#         DADO técnicos con distintas especialidades y certificaciones
-#         CUANDO se filtra por Especialidad=Eléctrico y Certificación=II
-#         ENTONCES solo se muestran técnicos que cumplan ambos criterios.
+#         DADO tecnicos con distintas especialidades y certificaciones
+#         CUANDO se filtra por Especialidad=Electrico y Certificación=II
+#         ENTONCES solo se muestran tecnicos que cumplan ambos criterios.
 #         """
 #         rmi_registry.alta_tecnico(
 #             id_tecnico="TEC-E2A", nombre_completo="Ana Torres",
