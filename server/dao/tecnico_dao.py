@@ -20,7 +20,7 @@ class TecnicoDAO:
                 with conn.cursor() as cur:
                     cur.execute(sql, datos)
 
-                conn.commit()
+
 
             return True
 
@@ -44,7 +44,6 @@ class TecnicoDAO:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, datos)
-            conn.commit()
         return True
 
     def eliminar(self, id_tecnico: str) -> bool:
@@ -52,7 +51,6 @@ class TecnicoDAO:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (id_tecnico,))
-            conn.commit()
         return True
 
     def tiene_ordenes_activas(self, id_tecnico: str) -> bool:

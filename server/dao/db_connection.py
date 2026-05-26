@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 import os
 from pathlib import Path
 
@@ -27,8 +28,17 @@ def _get_config() -> dict:
 
     }
 
+@contextmanager
 def get_connection():
+    conn = None
     try:
-        return psycopg2.connect(**_get_config(), cursor_factory=RealDictCursor)
-    except psycopg2.OperationalError as e:
-        raise ConnectionError(f"No se pudo conectar a PostgreSQL: {e}") from None
+        conn = psycopg2.connect(**_get_config(), cursor_factory=RealDictCursor)
+        yield conn
+        conn.commit()   
+    except Exception:
+        if conn:
+            conn.rollback() 
+        raise
+    finally:
+        if conn:
+            conn.close()

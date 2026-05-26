@@ -20,7 +20,6 @@ class EquipoDAO:
                 except psycopg2.Error as e:
                     print("PG ERROR:", e.args)
                     raise
-            conn.commit()
         return True
 
     def buscar_por_id(self, id_equipo: str) -> dict | None:
@@ -48,7 +47,6 @@ class EquipoDAO:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, datos)
-            conn.commit()
         return True
 
     def eliminar(self, id_equipo: str) -> bool:
@@ -56,7 +54,6 @@ class EquipoDAO:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (id_equipo,))
-            conn.commit()
         return True
 
     def tiene_ordenes_vinculadas(self, id_equipo: str) -> bool:

@@ -146,6 +146,7 @@ def rmi_registry():
     """Conexion base al servidor/registro RMI de SIGOMEI."""
     uri = "PYRO:sigomei.controller@localhost:9090"
     with Proxy(uri) as proxy:
+        proxy._pyroTimeout = 10
         yield _SigomeiProxy(proxy)   # ← envuelto en el proxy traductor
 
 @pytest.fixture(scope="function")
