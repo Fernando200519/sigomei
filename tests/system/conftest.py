@@ -36,7 +36,7 @@ for _nombre, _cls in _EXCEPCIONES_SIGOMEI.items():
     register_dict_to_class(_nombre, _hacer_reconstructor(_cls))
 
 def _esperar_puerto(host: str, puerto: int, timeout: float = 5.0):
-    """Bloquea la ejecución hasta que el servidor RMI esté escuchando en el puerto."""
+    """Bloquea la ejecucion hasta que el servidor RMI esté escuchando en el puerto."""
     tiempo_inicio = time.time()
     while True:
         try:
@@ -67,12 +67,7 @@ def gestionar_servidor_sigomei():
                "-m",
                "server.main_server"]
 
-    proceso_servidor = subprocess.Popen(
-        comando,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
-    )
+    proceso_servidor = subprocess.Popen(comando)
 
     try:
         _esperar_puerto("localhost", 9090, timeout=7.0)

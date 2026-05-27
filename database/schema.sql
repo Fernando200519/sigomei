@@ -49,7 +49,7 @@ CREATE TABLE ordenes_mantenimiento (
     costo_estimado      NUMERIC(12,2)  NOT NULL,
     costo_real          NUMERIC(12,2),
     estado_orden        VARCHAR(20)    NOT NULL DEFAULT 'Programada'
-                            CHECK (estado_orden IN ('Programada','En ejecución','Finalizada','Cancelada')),
+                            CHECK (estado_orden IN ('Programada','En ejecucion','Finalizada','Cancelada')),
 
     CONSTRAINT chk_inicio_vs_programada
         CHECK (fecha_inicio IS NULL OR fecha_inicio >= fecha_programada),

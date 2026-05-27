@@ -24,10 +24,10 @@ VALUES
      '2025-07-01', NULL, NULL,
      'Revisión semestral del transformador T1', 5000.00, NULL, 'Programada'),
 
-    -- Orden en ejecución
+    -- Orden en ejecucion
     ('OM-002', 'EQ-002', 'TEC-001', 'Correctivo',
      '2025-06-10', '2025-06-12', NULL,
-     'Reemplazo de rodamientos en bomba B2',    3200.00, NULL, 'En ejecución'),
+     'Reemplazo de rodamientos en bomba B2',    3200.00, NULL, 'En ejecucion'),
 
     -- Orden finalizada
     ('OM-003', 'EQ-003', 'TEC-004', 'Preventivo',

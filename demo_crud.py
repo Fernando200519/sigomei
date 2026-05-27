@@ -171,10 +171,10 @@ def main():
     #  Ciclo de vida de la Orden
     titulo("BLOQUE 5 · Ciclo de vida completo de la Orden")
 
-    info("Iniciando ejecución de OM-100 (fecha_inicio='2026-06-02')…")
+    info("Iniciando ejecucion de OM-100 (fecha_inicio='2026-06-02')…")
     try:
         proxy.iniciar_ejecucion("OM-100", "2026-06-02")
-        ok("iniciar_ejecucion → estado: En ejecución")
+        ok("iniciar_ejecucion → estado: En ejecucion")
     except Exception as e:
         fallo(f"iniciar_ejecucion: {_msg(e)}")
 

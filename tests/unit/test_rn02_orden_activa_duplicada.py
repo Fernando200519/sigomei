@@ -1,6 +1,6 @@
 """
 RN-02: Un equipo no puede tener dos órdenes activas
-        (Programada o En ejecución) en la misma fecha.
+        (Programada o En ejecucion) en la misma fecha.
 """
 
 import pytest

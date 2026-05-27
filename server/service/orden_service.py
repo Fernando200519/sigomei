@@ -14,13 +14,13 @@ from server.exceptions.exceptions import (
 NIVEL_NUM: dict[str, int] = {"I": 1, "II": 2, "III": 3}
 
 TRANSICIONES_VALIDAS: dict[str, list[str]] = {
-    "Programada":   ["En ejecución", "Cancelada"],
-    "En ejecución": ["Finalizada",   "Cancelada"],
+    "Programada":   ["En ejecucion", "Cancelada"],
+    "En ejecucion": ["Finalizada",   "Cancelada"],
     "Finalizada":   [],
     "Cancelada":    [],
 }
 
-ESTADOS_ACTIVOS = {"Programada", "En ejecución"}
+ESTADOS_ACTIVOS = {"Programada", "En ejecucion"}
 
 
 def _nfc(texto: str) -> str:
@@ -125,11 +125,11 @@ class OrdenService:
         # RN-16:
         ordenes_activas = self._dao.listar_por_filtros(
             {"id_tecnico": id_tecnico,
-             "estado_orden": "En Ejecucion"}
+             "estado_orden": "En ejecucion"}
         )
 
         if ordenes_activas:
-            raise ReglaNegocioError("No es posible asignar un técnico con una orden En Ejecucion"
+            raise ReglaNegocioError("No es posible asignar un técnico con una orden En ejecucion"
             )
 
         return self._dao.asignar_tecnico(id_orden, id_tecnico)
@@ -139,7 +139,7 @@ class OrdenService:
         if not orden:
             raise EntidadNoEncontradaError(f"Orden '{id_orden}' no encontrada")
 
-        self._validar_transicion(orden["estado_orden"], "En ejecución")
+        self._validar_transicion(orden["estado_orden"], "En ejecucion")
 
         fp = _parse_fecha(orden["fecha_programada"])
         fi = _parse_fecha(fecha_inicio)
@@ -149,7 +149,7 @@ class OrdenService:
                 f"anterior a la fecha programada ({orden['fecha_programada']})."
             )
 
-        self._dao.actualizar_estado(id_orden, "En ejecución")
+        self._dao.actualizar_estado(id_orden, "En ejecucion")
         return self._dao.actualizar_inicio(id_orden, fecha_inicio)
 
     def finalizar_orden(self, id_orden, fecha_cierre, costo_real):

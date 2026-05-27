@@ -25,7 +25,7 @@ def test_asignar_tecnico_con_orden_en_ejecucion_es_invalido(
     orden_service._dao.listar_por_filtros.return_value = [
         {
             "id_orden": "OM-777",
-            "estado_orden": "En Ejecucion"
+            "estado_orden": "En ejecucion"
         }
     ]
 

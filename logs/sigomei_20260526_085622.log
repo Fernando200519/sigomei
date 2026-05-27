@@ -1026,7 +1026,7 @@
 2026-05-26 09:23:48  INFO      sigomei.server — Operación exitosa: iniciar_ejecucion | Respuesta: True
 2026-05-26 09:23:48  INFO      sigomei.server — Solicitud remota recibida: listar_ordenes_por_filtro | Parámetros: ({'estado_orden': 'Programada'},)
 2026-05-26 09:23:48  INFO      sigomei.server — Operación exitosa: listar_ordenes_por_filtro | Respuesta: [{'id_orden': 'ORD-003', 'id_equipo': 'EQ-001', 'id_tecnico': 'TEC-002', 'tipo_mantenimiento': 'Preventivo', 'fecha_programada': datetime.date(2026, 6, 13), 'fecha_inicio': None, 'fecha_cierre': None, 'descripcion_trabajo': 'Revisión 3', 'costo_estimado': Decimal('1000.00'), 'costo_real': None, 'estado_orden': 'Programada'}, {'id_orden': 'ORD-004', 'id_equipo': 'EQ-001', 'id_tecnico': 'TEC-002', 'tipo_mantenimiento': 'Preventivo', 'fecha_programada': datetime.date(2026, 6, 14), 'fecha_inicio': None, 'fecha_cierre': None, 'descripcion_trabajo': 'Revisión 4', 'costo_estimado': Decimal('1000.00'), 'costo_real': None, 'estado_orden': 'Programada'}]
-2026-05-26 09:23:48  INFO      sigomei.server — Solicitud remota recibida: listar_ordenes_por_filtro | Parámetros: ({'estado_orden': 'En Ejecucion'},)
+2026-05-26 09:23:48  INFO      sigomei.server — Solicitud remota recibida: listar_ordenes_por_filtro | Parámetros: ({'estado_orden': 'En ejecucion'},)
 2026-05-26 09:23:48  INFO      sigomei.server — Operación exitosa: listar_ordenes_por_filtro | Respuesta: []
 2026-05-26 09:23:48  INFO      sigomei.server — Solicitud remota recibida: alta_equipo | Parámetros: 
 2026-05-26 09:23:48  INFO      sigomei.server — Operación exitosa: alta_equipo | Respuesta: True

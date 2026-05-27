@@ -13,13 +13,13 @@ class TestRN05FechasCoherentes:
 
     def test_fecha_cierre_anterior_a_fecha_inicio_lanza_excepcion(self, orden_service):
         """
-        DADO   una orden en estado 'En Ejecucion' con fecha_inicio = 2026-06-05
+        DADO   una orden en estado 'En ejecucion' con fecha_inicio = 2026-06-05
         CUANDO se intenta finalizar con fecha_cierre = 2026-06-01 (anterior)
         ENTONCES debe lanzar ReglaNegocioError
         """
         orden_service._dao.buscar_por_id.return_value = {
             "id_orden": "OM-020",
-            "estado_orden": "En Ejecucion",
+            "estado_orden": "En ejecucion",
             "fecha_programada": "2026-06-01",
             "fecha_inicio": "2026-06-05",
             "id_tecnico": "TEC-002",
@@ -52,7 +52,7 @@ class TestRN05FechasCoherentes:
         """
         orden_service._dao.buscar_por_id.return_value = {
             "id_orden": "OM-022",
-            "estado_orden": "En Ejecucion",
+            "estado_orden": "En ejecucion",
             "fecha_programada": "2026-06-01",
             "fecha_inicio": "2026-06-05",
             "id_tecnico": "TEC-002",

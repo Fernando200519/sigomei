@@ -68,7 +68,7 @@ class TestTC_SIS_02_TableroPorEstado:
         rmi_registry.iniciar_ejecucion("ORD-002", "2026-06-12")
 
         programadas  = rmi_registry.listar_ordenes_por_filtro({"estado_orden": "Programada"})
-        en_ejecucion = rmi_registry.listar_ordenes_por_filtro({"estado_orden": "En Ejecucion"})
+        en_ejecucion = rmi_registry.listar_ordenes_por_filtro({"estado_orden": "En ejecucion"})
 
         assert len(programadas)  >= 2
         assert len(en_ejecucion) >= 2

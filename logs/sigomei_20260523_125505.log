@@ -30,7 +30,7 @@
 2026-05-23 12:55:32  INFO      sigomei.server — Operación exitosa: asignar_tecnico | Respuesta: True
 2026-05-23 12:55:33  INFO      sigomei.server — Solicitud remota recibida: iniciar_ejecucion | Parámetros: ('OM-100', '2026-06-02')
 2026-05-23 12:55:33  ERROR     sigomei.server — Error crítico interno en iniciar_ejecucion: CheckViolation — el nuevo registro para la relación «ordenes_mantenimiento» viola la restricción «check» «ordenes_mantenimiento_estado_orden_check»
-DETAIL:  La fila que falla contiene (OM-100, EQ-100, TEC-101, Preventivo, 2026-06-01, null, null, Revisión general del motor de demostración, 3500.00, null, En ejecución).
+DETAIL:  La fila que falla contiene (OM-100, EQ-100, TEC-101, Preventivo, 2026-06-01, null, null, Revisión general del motor de demostración, 3500.00, null, En ejecucion).
 Traceback (most recent call last):
   File "C:\Proyectos\sigomei\server\controller\isigomei_controller.py", line 25, in wrapper
     resultado = fn(*args, **kwargs)
@@ -38,7 +38,7 @@ Traceback (most recent call last):
     return self._orden_svc.iniciar_ejecucion(id_orden, fecha_inicio)
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
   File "C:\Proyectos\sigomei\server\service\orden_service.py", line 127, in iniciar_ejecucion
-    self._dao.actualizar_estado(id_orden, "En ejecución")
+    self._dao.actualizar_estado(id_orden, "En ejecucion")
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "C:\Proyectos\sigomei\server\dao\orden_dao.py", line 43, in actualizar_estado
     cur.execute(sql, (nuevo_estado, id_orden))
@@ -47,10 +47,10 @@ Traceback (most recent call last):
     return super().execute(query, vars)
            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
 psycopg2.errors.CheckViolation: el nuevo registro para la relación «ordenes_mantenimiento» viola la restricción «check» «ordenes_mantenimiento_estado_orden_check»
-DETAIL:  La fila que falla contiene (OM-100, EQ-100, TEC-101, Preventivo, 2026-06-01, null, null, Revisión general del motor de demostración, 3500.00, null, En ejecución).
+DETAIL:  La fila que falla contiene (OM-100, EQ-100, TEC-101, Preventivo, 2026-06-01, null, null, Revisión general del motor de demostración, 3500.00, null, En ejecucion).
 
 2026-05-23 12:55:33  INFO      sigomei.server — Solicitud remota recibida: finalizar_orden | Parámetros: ('OM-100', '2026-06-05', 3200.0)
-2026-05-23 12:55:33  WARNING   sigomei.server — Validación de Regla denegada en finalizar_orden: EstadoInvalidoError — RN-08: Transición inválida de 'Programada' → 'Finalizada'. Transiciones permitidas: ['En ejecución', 'Cancelada'].
+2026-05-23 12:55:33  WARNING   sigomei.server — Validación de Regla denegada en finalizar_orden: EstadoInvalidoError — RN-08: Transición inválida de 'Programada' → 'Finalizada'. Transiciones permitidas: ['En ejecucion', 'Cancelada'].
 2026-05-23 12:55:36  INFO      sigomei.server — Solicitud remota recibida: baja_equipo | Parámetros: ('EQ-100',)
 2026-05-23 12:55:37  WARNING   sigomei.server — Validación de Regla denegada en baja_equipo: IntegridadReferencialError — RN-04: El equipo 'EQ-100' tiene órdenes de mantenimiento vinculadas y no puede eliminarse.
 2026-05-23 12:55:37  INFO      sigomei.server — Solicitud remota recibida: baja_tecnico | Parámetros: ('TEC-100',)
