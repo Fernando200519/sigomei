@@ -1,12 +1,12 @@
 """
 RN-08: Transiciones permitidas:
-         Programada → En Ejecucion → Finalizada
-         Cancelada solo desde Programada o En Ejecucion.
-       Cualquier otra transicion debe ser rechazada.
+         Programada → En ejecucion → Finalizada
+         Cancelada solo desde Programada o En ejecucion.
+       Cualquier otra transición debe ser rechazada.
 """
 
 import pytest
-from server.exceptions.exceptions import EstadoInvalidoError
+from server.exceptions.exceptions import EntidadNoEncontradaError, EstadoInvalidoError
 
 
 class TestRN08TransicionesEstado:
@@ -50,7 +50,7 @@ class TestRN08TransicionesEstado:
         assert resultado is True
 
     def test_finalizar_orden_programada_lanza_excepcion(self, orden_service):
-        """No se puede finalizar una orden que no esta 'En Ejecucion'."""
+        """No se puede finalizar una orden que no está 'En Ejecucion'."""
         orden_service._dao.buscar_por_id.return_value = {
             "id_orden": "OM-053",
             "estado_orden": "Programada",
@@ -90,3 +90,40 @@ class TestRN08TransicionesEstado:
 
         with pytest.raises(EstadoInvalidoError):
             orden_service.cancelar_orden("OM-056")
+    
+    def test_iniciar_ejecucion_orden_no_existente_es_invalido(
+        self, 
+        orden_service
+    ):
+        orden_service._dao.buscar_por_id.return_value = None
+
+        with pytest.raises(EntidadNoEncontradaError):
+            orden_service.iniciar_ejecucion(
+                "OM-001",
+                "2026-05-24"
+            )
+
+
+    def test_finalizar_orden_no_existente_es_invalido(
+        self, orden_service
+    ):
+        orden_service._dao.buscar_por_id.return_value = None
+
+        with pytest.raises(EntidadNoEncontradaError):
+            orden_service.finalizar_orden(
+                "OM-001",
+                "2026-05-25",
+                1500.0
+            )
+
+
+    def test_cancelar_orden_no_existente_es_invalido(
+        self, orden_service
+    ):
+        orden_service._dao.buscar_por_id.return_value = None
+
+        with pytest.raises(EntidadNoEncontradaError):
+            orden_service.cancelar_orden(
+                "OM-001"
+            )
+

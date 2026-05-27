@@ -220,4 +220,4 @@ El servidor valida rigurosamente las siguientes directrices antes de alterar el 
 | **RN-05** | Coherencia cronológica: La `fecha_programada` ≤ `fecha_inicio` ≤ `fecha_cierre`.                            | `OrdenService.iniciar_ejecucion()` / `finalizar_orden()`        |
 | **RN-06** | Al cambiar al estado 'Finalizada', los campos `fecha_cierre` y `costo_real` pasan a ser obligatorios.       | `OrdenService.finalizar_orden()`                                |
 | **RN-07** | Los equipos con nivel de criticidad Alta exigen un técnico con certificación nivel II o III.                | `OrdenService.asignar_tecnico()`                                |
-| **RN-08** | El ciclo de vida de la orden solo admite transiciones válidas (ej. Programada → En ejecución → Finalizada). | `OrdenService._validar_transicion()`                            |
+| **RN-08** | El ciclo de vida de la orden solo admite transiciones válidas (ej. Programada → En ejecucion → Finalizada). | `OrdenService._validar_transicion()`                            |

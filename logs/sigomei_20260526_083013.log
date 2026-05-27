@@ -1,0 +1,8 @@
+2026-05-26 08:30:13  INFO      sigomei.server — Iniciando servidor SIGOMEI…
+2026-05-26 08:30:13  INFO      sigomei.server — Archivo de bitácora: D:\sigomei\logs\sigomei_20260526_083013.log
+2026-05-26 08:30:13  INFO      sigomei.server — Controlador registrado → PYRO:sigomei.controller@localhost:9090
+2026-05-26 08:30:13  INFO      sigomei.server — Esperando peticiones en localhost:9090 …
+2026-05-26 08:30:15  INFO      sigomei.server — Solicitud remota recibida: alta_equipo | Parámetros: 
+2026-05-26 08:30:15  INFO      sigomei.server — Operación exitosa: alta_equipo | Respuesta: True
+2026-05-26 08:30:15  INFO      sigomei.server — Solicitud remota recibida: alta_equipo | Parámetros: 
+2026-05-26 08:30:15  WARNING   sigomei.server — Rechazado en alta_equipo: EntidadDuplicadaError — Ya existe un equipo con número de serie 'NS-001'

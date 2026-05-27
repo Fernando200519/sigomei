@@ -12,7 +12,7 @@ class TestRN06CamposEstadoFinalizada:
 
     def test_finalizar_sin_costo_real_lanza_excepcion(self, orden_service):
         """
-        DADO   una orden en 'En Ejecucion'
+        DADO   una orden en 'En ejecucion'
         CUANDO se intenta finalizar con costo_real = None
         ENTONCES debe lanzar ReglaNegocioError
         """
@@ -29,7 +29,7 @@ class TestRN06CamposEstadoFinalizada:
 
     def test_finalizar_sin_fecha_cierre_lanza_excepcion(self, orden_service):
         """
-        DADO   una orden en 'En Ejecucion'
+        DADO   una orden en 'En ejecucion'
         CUANDO se intenta finalizar con fecha_cierre = None
         ENTONCES debe lanzar ReglaNegocioError
         """
@@ -46,7 +46,7 @@ class TestRN06CamposEstadoFinalizada:
 
     def test_finalizar_con_todos_los_campos_es_exitoso(self, orden_service):
         """
-        DADO   una orden en 'En Ejecucion' con todos los datos correctos
+        DADO   una orden en 'En ejecucion' con todos los datos correctos
         CUANDO se finaliza
         ENTONCES debe retornar True
         """

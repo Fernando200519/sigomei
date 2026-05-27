@@ -64,7 +64,13 @@ def gestionar_servidor_sigomei():
     """
     print("\n[INFO] Levantando el servidor SIGOMEI para pruebas de sistema...")
 
-    comando = [sys.executable, "-m", "server.main_server"]
+    comando = [sys.executable, 
+               "-m", 
+               "coverage",
+               "run",
+               "--parallel-mode",
+               "-m",
+               "server.main_server"]
 
     proceso_servidor = subprocess.Popen(comando)
 

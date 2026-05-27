@@ -94,7 +94,7 @@ class TestTC_SIS_16_BajaTecnicoConOrdenes:
 
         rmi_registry.baja_tecnico("TEC-003")
 
-        # # El tecnico sigue existiendo en BD (no eliminado físicamente)
+        # # El técnico sigue existiendo en BD (borrado lógico)
         tecnico = rmi_registry.consultar_tecnico("TEC-003")
         assert tecnico is not None
         assert tecnico["estatus"].lower() == "inactivo"
@@ -134,34 +134,35 @@ class TestTC_SIS_17_TecnicoInactivoAsignacion:
             rmi_registry.asignar_tecnico("ORD-002", "TEC-004")
 
 
-# class TestTC_SIS_21_FiltroTecnicos:
-#     """TC-SIS-21 | RF-18"""
+@pytest.mark.skip(reason="La consulta por filtros no se encuentra implementada aún")
+class TestTC_SIS_21_FiltroTecnicos:
+    """TC-SIS-21 | RF-18"""
 
-#     def test_sis21_consulta_tecnicos_filtro_especialidad_certificacion(self, rmi_registry, db_test):
-#         """
-#         DADO tecnicos con distintas especialidades y certificaciones
-#         CUANDO se filtra por Especialidad=Electrico y Certificación=II
-#         ENTONCES solo se muestran tecnicos que cumplan ambos criterios.
-#         """
-#         rmi_registry.alta_tecnico(
-#             id_tecnico="TEC-E2A", nombre_completo="Ana Torres",
-#             rfc="TOEA900101EEE", telefono="9210000001",
-#             correo="ana@sigomei.mx", especialidad="Electrico",
-#             nivel_certificacion="II", fecha_ingreso="2025-01-01", estatus="Activo",
-#         )
-#         rmi_registry.alta_tecnico(
-#             id_tecnico="TEC-M1A", nombre_completo="Carlos Vega",
-#             rfc="VECC900202MMM", telefono="9210000002",
-#             correo="vegac@sigomei.mx", especialidad="Mecanico",
-#             nivel_certificacion="I", fecha_ingreso="2025-01-01", estatus="Activo",
-#         )
+    def test_sis21_consulta_tecnicos_filtro_especialidad_certificacion(self, rmi_registry, db_test):
+        """
+        DADO técnicos con distintas especialidades y certificaciones
+        CUANDO se filtra por Especialidad=Eléctrico y Certificación=II
+        ENTONCES solo se muestran técnicos que cumplan ambos criterios.
+        """
+        rmi_registry.alta_tecnico(
+            id_tecnico="TEC-E2A", nombre_completo="Ana Torres",
+            rfc="TOEA900101EEE", telefono="9210000001",
+            correo="ana@sigomei.mx", especialidad="Electrico",
+            nivel_certificacion="II", fecha_ingreso="2025-01-01", estatus="Activo",
+        )
+        rmi_registry.alta_tecnico(
+            id_tecnico="TEC-M1A", nombre_completo="Carlos Vega",
+            rfc="VECC900202MMM", telefono="9210000002",
+            correo="vegac@sigomei.mx", especialidad="Mecanico",
+            nivel_certificacion="I", fecha_ingreso="2025-01-01", estatus="Activo",
+        )
 
-#         resultado = rmi_registry.listar_tecnicos_por_filtro(
-#             {"especialidad": "Electrico", "nivel_certificacion": "II"}
-#         )
+        resultado = rmi_registry.listar_tecnicos_por_filtro(
+            {"especialidad": "Electrico", "nivel_certificacion": "II"}
+        )
 
-#         assert isinstance(resultado, list)
-#         assert len(resultado) >= 1
-#         for tecnico in resultado:
-#             assert tecnico["especialidad"] == "Electrico"
-#             assert tecnico["nivel_certificacion"] == "II"
+        assert isinstance(resultado, list)
+        assert len(resultado) >= 1
+        for tecnico in resultado:
+            assert tecnico["especialidad"] == "Electrico"
+            assert tecnico["nivel_certificacion"] == "II"

@@ -2,15 +2,18 @@
 RN-05: fecha_cierre >= fecha_inicio >= fecha_programada
 """
 
+from datetime import date
+
 import pytest
 from server.exceptions.exceptions import ReglaNegocioError
+from server.service.orden_service import _parse_fecha
 
 
 class TestRN05FechasCoherentes:
 
     def test_fecha_cierre_anterior_a_fecha_inicio_lanza_excepcion(self, orden_service):
         """
-        DADO   una orden en estado 'En Ejecucion' con fecha_inicio = 2026-06-05
+        DADO   una orden en estado 'En ejecucion' con fecha_inicio = 2026-06-05
         CUANDO se intenta finalizar con fecha_cierre = 2026-06-01 (anterior)
         ENTONCES debe lanzar ReglaNegocioError
         """
@@ -59,3 +62,10 @@ class TestRN05FechasCoherentes:
 
         resultado = orden_service.finalizar_orden("OM-022", "2026-06-10", 3000.0)
         assert resultado is True
+
+    def test_parse_fecha_con_date_retorna_mismo_objeto(self):
+        fecha = date(2026, 5, 24)
+
+        resultado = _parse_fecha(fecha)
+
+        assert resultado == fecha

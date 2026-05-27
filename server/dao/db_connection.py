@@ -6,10 +6,10 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from dotenv import load_dotenv
 
-_ENV_PATH = Path(__file__).resolve().parents[2] / ".env"
-load_dotenv(dotenv_path=_ENV_PATH)
+_ENV_PATH = Path(__file__).resolve().parents[3] / ".env"
 
 def _get_config() -> dict:
+    load_dotenv(dotenv_path=_ENV_PATH)
     required = ("DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD")
     missing = [v for v in required if not os.getenv(v)]
     if missing:

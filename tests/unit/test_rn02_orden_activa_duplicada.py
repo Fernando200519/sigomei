@@ -1,5 +1,5 @@
 """
-RN-02: Un equipo no puede tener dos ordenes activas
+RN-02: Un equipo no puede tener dos órdenes activas
         (Programada o En ejecucion) en la misma fecha.
 """
 
@@ -43,3 +43,47 @@ class TestRN02OrdenActivaDuplicada:
             "2026-07-15", "Cambio de fusibles", 800.0
         )
         assert resultado is True
+
+    def test_crear_orden_equipo_con_orden_activa_misma_fecha_es_invalido(
+        self, 
+        orden_service,
+        equipo_electrico_alta):
+        orden_service._equipo_dao.buscar_por_id.return_value = (
+            equipo_electrico_alta
+        )
+
+        orden_service._dao.listar_por_filtros.return_value = [
+            {
+                "id_orden": "OM-999",
+                "estado_orden": "Programada",
+                "fecha_programada": "2026-05-24"
+            }
+        ]
+
+        with pytest.raises(EntidadDuplicadaError):
+            orden_service.crear_orden(
+                "OM-001",
+                "EQ-001",
+                "Preventivo",
+                "2026-05-24",
+                "Cambio de piezas",
+                1000.0
+            )
+
+    def test_consultar_orden_es_valido(
+        self, 
+        orden_service
+    ):
+        orden = {
+            "id_orden": "OM-001",
+            "estado_orden": "Programada"
+        }
+
+        orden_service._dao.buscar_por_id.return_value = orden
+
+        resultado = orden_service.consultar_orden(
+            "OM-001"
+        )
+
+        assert resultado == orden
+
