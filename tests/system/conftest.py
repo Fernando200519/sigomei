@@ -154,5 +154,6 @@ def db_test():
             cursor.execute("DELETE FROM ordenes_mantenimiento")
             cursor.execute("DELETE FROM tecnicos")
             cursor.execute("DELETE FROM equipos")
+            cursor.execute("DELETE FROM usuarios")
         connection.commit()
     yield

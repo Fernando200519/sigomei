@@ -2,8 +2,7 @@
 RN-05: fecha_cierre >= fecha_inicio >= fecha_programada
 """
 
-from datetime import date
-
+from datetime import date, datetime
 import pytest
 from server.exceptions.exceptions import ReglaNegocioError
 from server.service.orden_service import _parse_fecha
@@ -17,12 +16,14 @@ class TestRN05FechasCoherentes:
         CUANDO se intenta finalizar con fecha_cierre = 2026-06-01 (anterior)
         ENTONCES debe lanzar ReglaNegocioError
         """
+        orden_service._dao.obtener_id_orden_int.return_value = 20
         orden_service._dao.buscar_por_id.return_value = {
+            "id_orden_int": 20,
             "id_orden": "OM-020",
             "estado_orden": "En ejecucion",
             "fecha_programada": "2026-06-01",
-            "fecha_inicio": "2026-06-05",
-            "id_tecnico": "TEC-002",
+            "fecha_inicio": datetime(2026, 6, 5, 0, 0, 0),
+            "id_tecnico_int": 2,
         }
 
         with pytest.raises(ReglaNegocioError):
@@ -34,11 +35,13 @@ class TestRN05FechasCoherentes:
         CUANDO se intenta iniciar con fecha_inicio = 2026-06-01 (anterior)
         ENTONCES debe lanzar ReglaNegocioError
         """
+        orden_service._dao.obtener_id_orden_int.return_value = 21
         orden_service._dao.buscar_por_id.return_value = {
+            "id_orden_int": 21,
             "id_orden": "OM-021",
             "estado_orden": "Programada",
             "fecha_programada": "2026-06-10",
-            "id_tecnico": "TEC-002",
+            "id_tecnico_int": 2,
         }
 
         with pytest.raises(ReglaNegocioError):
@@ -50,12 +53,14 @@ class TestRN05FechasCoherentes:
         CUANDO se finaliza la orden
         ENTONCES debe retornar True sin lanzar excepcion
         """
+        orden_service._dao.obtener_id_orden_int.return_value = 22
         orden_service._dao.buscar_por_id.return_value = {
+            "id_orden_int": 22,
             "id_orden": "OM-022",
             "estado_orden": "En ejecucion",
             "fecha_programada": "2026-06-01",
-            "fecha_inicio": "2026-06-05",
-            "id_tecnico": "TEC-002",
+            "fecha_inicio": datetime(2026, 6, 5, 0, 0, 0),
+            "id_tecnico_int": 2,
         }
         orden_service._dao.actualizar_cierre.return_value = True
         orden_service._dao.actualizar_estado.return_value = True

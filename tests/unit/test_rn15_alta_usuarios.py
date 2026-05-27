@@ -1,9 +1,3 @@
-"""
-RN-15: Solo los Supervisores Operativos / Coordinadores pueden gestionar usuarios
-
-
-"""
-
 import pytest
 
 from server.exceptions.exceptions import (
@@ -21,8 +15,9 @@ class TestRN15AltaTecnicos:
         tecnico_service,
         tecnico_activo_electricista_nivel2
     ):
-        tecnico_service._dao.buscar_por_id.return_value = None
-        tecnico_service._dao.existe_rfc.return_value = None
+        tecnico_service._usuario_dao.obtener_id_usuario_int.return_value = None
+        tecnico_service._dao.existe_rfc.return_value = False
+        tecnico_service._usuario_dao.insertar.return_value = 4
         tecnico_service._dao.insertar.return_value = True
 
         resultado = tecnico_service.alta_tecnico(
@@ -60,7 +55,7 @@ class TestRN15AltaTecnicos:
         tecnico_service,
         tecnico_activo_electricista_nivel2
     ):
-        tecnico_activo_electricista_nivel2["estatus"] = "Suspendido"
+        tecnico_activo_electricista_nivel2["estatus"] = "Fuera de servicio"
 
         with pytest.raises(ReglaNegocioError):
             tecnico_service.alta_tecnico(
@@ -72,9 +67,7 @@ class TestRN15AltaTecnicos:
         tecnico_service,
         tecnico_activo_electricista_nivel2
     ):
-        tecnico_service._dao.buscar_por_id.return_value = {
-            "id_tecnico": "TEC001"
-        }
+        tecnico_service._usuario_dao.obtener_id_usuario_int.return_value = 4
 
         with pytest.raises(EntidadDuplicadaError):
             tecnico_service.alta_tecnico(
@@ -86,7 +79,7 @@ class TestRN15AltaTecnicos:
         tecnico_service,
         tecnico_activo_electricista_nivel2
     ):
-        tecnico_service._dao.buscar_por_id.return_value = None
+        tecnico_service._usuario_dao.obtener_id_usuario_int.return_value = None
         tecnico_service._dao.existe_rfc.return_value = True
 
         with pytest.raises(EntidadDuplicadaError):
@@ -102,10 +95,12 @@ class TestConsultarTecnico:
         tecnico_service
     ):
         tecnico = {
+            "id_tecnico_int": 1,
             "id_tecnico": "TEC001",
             "nombre_completo": "Juan Pérez"
         }
 
+        tecnico_service._usuario_dao.obtener_id_usuario_int.return_value = 1
         tecnico_service._dao.buscar_por_id.return_value = tecnico
 
         resultado = tecnico_service.consultar_tecnico("TEC001")
@@ -116,7 +111,7 @@ class TestConsultarTecnico:
         self,
         tecnico_service
     ):
-        tecnico_service._dao.buscar_por_id.return_value = None
+        tecnico_service._usuario_dao.obtener_id_usuario_int.return_value = None
 
         with pytest.raises(EntidadNoEncontradaError):
             tecnico_service.consultar_tecnico("TEC999")
@@ -128,7 +123,9 @@ class TestModificarTecnico:
         self,
         tecnico_service
     ):
+        tecnico_service._usuario_dao.obtener_id_usuario_int.return_value = 1
         tecnico_service._dao.buscar_por_id.return_value = {
+            "id_tecnico_int": 1,
             "id_tecnico": "TEC001"
         }
         tecnico_service._dao.actualizar.return_value = True
@@ -145,7 +142,7 @@ class TestModificarTecnico:
         assert resultado is True
 
         tecnico_service._dao.actualizar.assert_called_once_with(
-            "TEC001",
+            1,
             datos_actualizados
         )
 
@@ -153,7 +150,7 @@ class TestModificarTecnico:
         self,
         tecnico_service
     ):
-        tecnico_service._dao.buscar_por_id.return_value = None
+        tecnico_service._usuario_dao.obtener_id_usuario_int.return_value = None
 
         with pytest.raises(EntidadNoEncontradaError):
             tecnico_service.modificar_tecnico(
@@ -168,7 +165,7 @@ class TestBajaTecnico:
         self,
         tecnico_service
     ):
-        tecnico_service._dao.buscar_por_id.return_value = None
+        tecnico_service._usuario_dao.obtener_id_usuario_int.return_value = None
 
         with pytest.raises(EntidadNoEncontradaError):
             tecnico_service.baja_tecnico("TEC999")
@@ -177,9 +174,11 @@ class TestBajaTecnico:
         self,
         tecnico_service
     ):
+        tecnico_service._usuario_dao.obtener_id_usuario_int.return_value = 1
         tecnico_service._dao.buscar_por_id.return_value = {
+            "id_tecnico_int": 1,
             "id_tecnico": "TEC001"
-        }
+            }
         tecnico_service._dao.tiene_ordenes_activas.return_value = True
 
         with pytest.raises(IntegridadReferencialError):
@@ -189,7 +188,9 @@ class TestBajaTecnico:
         self,
         tecnico_service
     ):
+        tecnico_service._usuario_dao.obtener_id_usuario_int.return_value = 1
         tecnico_service._dao.buscar_por_id.return_value = {
+            "id_tecnico_int": 1,
             "id_tecnico": "TEC001"
         }
         tecnico_service._dao.tiene_ordenes_activas.return_value = False
@@ -200,6 +201,6 @@ class TestBajaTecnico:
         assert resultado is True
 
         tecnico_service._dao.actualizar.assert_called_once_with(
-            "TEC001",
+            1,
             {"estatus": "Inactivo"}
         )

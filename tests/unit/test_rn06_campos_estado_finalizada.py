@@ -50,12 +50,17 @@ class TestRN06CamposEstadoFinalizada:
         CUANDO se finaliza
         ENTONCES debe retornar True
         """
+        from datetime import datetime
+
+        orden_service._dao.obtener_id_orden_int.return_value = 32
+
         orden_service._dao.buscar_por_id.return_value = {
+            "id_orden_int": 32,
             "id_orden": "OM-032",
             "estado_orden": "En ejecucion",
             "fecha_programada": "2026-05-01",
-            "fecha_inicio": "2026-05-05",
-            "id_tecnico": "TEC-002",
+            "fecha_inicio": datetime(2026, 5, 5, 0, 0, 0),
+            "id_tecnico_int": 2,
         }
         orden_service._dao.actualizar_cierre.return_value = True
         orden_service._dao.actualizar_estado.return_value = True

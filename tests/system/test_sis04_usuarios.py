@@ -85,7 +85,7 @@ class TestTC_SIS_16_BajaTecnicoConOrdenes:
         )
         rmi_registry.crear_orden(
             id_orden="ORD-H01", id_equipo="EQ-001",
-            tipo_mantenimiento="Preventivo", fecha_programada="2026-01-10",
+            tipo_mantenimiento="Mecanico", fecha_programada="2026-01-10",
             descripcion_trabajo="Revisión histórica", costo_estimado=500.0,
         )
         rmi_registry.asignar_tecnico("ORD-H01", "TEC-003")
@@ -126,7 +126,7 @@ class TestTC_SIS_17_TecnicoInactivoAsignacion:
 
         rmi_registry.crear_orden(
             id_orden="ORD-002", id_equipo="EQ-002",
-            tipo_mantenimiento="Correctivo", fecha_programada="2026-06-20",
+            tipo_mantenimiento="Electrico", fecha_programada="2026-06-20",
             descripcion_trabajo="Reparación", costo_estimado=800.0,
         )
 
@@ -134,7 +134,6 @@ class TestTC_SIS_17_TecnicoInactivoAsignacion:
             rmi_registry.asignar_tecnico("ORD-002", "TEC-004")
 
 
-@pytest.mark.skip(reason="La consulta por filtros no se encuentra implementada aún")
 class TestTC_SIS_21_FiltroTecnicos:
     """TC-SIS-21 | RF-18"""
 

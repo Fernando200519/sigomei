@@ -8,9 +8,13 @@ def test_asignar_tecnico_con_orden_en_ejecucion_es_invalido(
     equipo_electrico_alta,
     tecnico_activo_electricista_nivel2
 ):
+    orden_service._dao.obtener_id_orden_int.return_value = 1
+    orden_service._tecnico_dao.obtener_id_tecnico_int.return_value = 2
+
     orden_service._dao.buscar_por_id.return_value = {
+        "id_orden_int": 1,
         "id_orden": "OM-001",
-        "id_equipo": "EQ-001",
+        "id_equipo_int": 10,
         "estado_orden": "Programada",
     }
 
@@ -24,6 +28,7 @@ def test_asignar_tecnico_con_orden_en_ejecucion_es_invalido(
 
     orden_service._dao.listar_por_filtros.return_value = [
         {
+            "id_orden_int": 777,
             "id_orden": "OM-777",
             "estado_orden": "En ejecucion"
         }

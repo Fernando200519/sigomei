@@ -1,5 +1,7 @@
+from datetime import datetime
+
 import pytest
-from server.exceptions.exceptions import EntidadDuplicadaError, ReglaNegocioError, EstadoInvalidoError
+from server.exceptions.exceptions import EntidadDuplicadaError, ReglaNegocioError
 
 EQUIPO_MECANICO = dict(
     id_equipo="EQ-001", nombre="Bomba-01", tipo="Mecanico",
@@ -56,7 +58,7 @@ class TestTC_SIS_02_TableroPorEstado:
         for i in range(1, 5):
             rmi_registry.crear_orden(
                 id_orden=f"ORD-00{i}", id_equipo="EQ-001",
-                tipo_mantenimiento="Preventivo",
+                tipo_mantenimiento="Mecanico",
                 fecha_programada=f"2026-06-{10 + i:02d}",
                 descripcion_trabajo=f"Revisión {i}",
                 costo_estimado=1000.0,
@@ -92,7 +94,7 @@ class TestTC_SIS_03_CrearOrdenExitosa:
 
         resultado = rmi_registry.crear_orden(
             id_orden="ORD-001", id_equipo="EQ-001",
-            tipo_mantenimiento="Preventivo",
+            tipo_mantenimiento="Mecanico",
             fecha_programada="2026-06-10",
             descripcion_trabajo="Revisión de sellos",
             costo_estimado=1500.0,
@@ -118,7 +120,7 @@ class TestTC_SIS_04_EspecialidadIncompatible:
 
         rmi_registry.crear_orden(
             id_orden="ORD-001", id_equipo="EQ-002",
-            tipo_mantenimiento="Preventivo",
+            tipo_mantenimiento="Electrico",
             fecha_programada="2026-06-10",
             descripcion_trabajo="Revisión eléctrica",
             costo_estimado=2000.0,
@@ -142,7 +144,7 @@ class TestTC_SIS_05_CriticidadAltaCertificacionInsuficiente:
 
         rmi_registry.crear_orden(
             id_orden="ORD-001", id_equipo="EQ-003",
-            tipo_mantenimiento="Preventivo",
+            tipo_mantenimiento="Mecanico",
             fecha_programada="2026-06-10",
             descripcion_trabajo="Revisión compresor",
             costo_estimado=3000.0,
@@ -166,14 +168,14 @@ class TestTC_SIS_06_OrdenDuplicadaMismaFecha:
 
         rmi_registry.crear_orden(
             id_orden="ORD-001", id_equipo="EQ-001",
-            tipo_mantenimiento="Preventivo", fecha_programada="2026-06-10",
+            tipo_mantenimiento="Mecanico", fecha_programada="2026-06-10",
             descripcion_trabajo="Orden existente", costo_estimado=1000.0,
         )
 
         with pytest.raises(EntidadDuplicadaError):
             rmi_registry.crear_orden(
                 id_orden="ORD-002", id_equipo="EQ-001",
-                tipo_mantenimiento="Correctivo", fecha_programada="2026-06-10",
+                tipo_mantenimiento="Mecanico", fecha_programada="2026-06-10",
                 descripcion_trabajo="Orden duplicada", costo_estimado=800.0,
             )
 
@@ -191,7 +193,7 @@ class TestTC_SIS_07_TransicionProgramadaEnEjecucionSupervisor:
         rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)
         rmi_registry.crear_orden(
             id_orden="ORD-001", id_equipo="EQ-001",
-            tipo_mantenimiento="Preventivo", fecha_programada="2026-06-10",
+            tipo_mantenimiento="Mecanico", fecha_programada="2026-06-10",
             descripcion_trabajo="Revisión de sellos", costo_estimado=1500.0,
         )
         rmi_registry.asignar_tecnico("ORD-001", "TEC-002")
@@ -217,7 +219,7 @@ class TestTC_SIS_08_TransicionProgramadaEnEjecucionTecnico:
         rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)
         rmi_registry.crear_orden(
             id_orden="ORD-002", id_equipo="EQ-001",
-            tipo_mantenimiento="Correctivo", fecha_programada="2026-06-11",
+            tipo_mantenimiento="Mecanico", fecha_programada="2026-06-11",
             descripcion_trabajo="Cambio de rodamientos", costo_estimado=900.0,
         )
         rmi_registry.asignar_tecnico("ORD-002", "TEC-002")
@@ -243,7 +245,7 @@ class TestTC_SIS_10_SupervisorCierraOrden:
         rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)
         rmi_registry.crear_orden(
             id_orden="ORD-003", id_equipo="EQ-001",
-            tipo_mantenimiento="Preventivo", fecha_programada="2026-06-12",
+            tipo_mantenimiento="Mecanico", fecha_programada="2026-06-12",
             descripcion_trabajo="Revisión de válvulas", costo_estimado=1500.0,
         )
         rmi_registry.asignar_tecnico("ORD-003", "TEC-002")
@@ -251,12 +253,14 @@ class TestTC_SIS_10_SupervisorCierraOrden:
 
         resultado = rmi_registry.finalizar_orden("ORD-003", "2026-06-13", 1750.0)
 
+
         assert resultado is True
         orden = rmi_registry.consultar_orden("ORD-003")
+        dt_object = datetime.fromisoformat(orden["fecha_cierre"])
+
         assert orden["estado_orden"].lower() == "finalizada"
         assert float(orden["costo_real"]) == 1750.0
-        assert orden["fecha_cierre"] == "2026-06-13"
-
+        assert str(dt_object.date()) == "2026-06-13"
 
 
 class TestTC_SIS_11_CierreOrdenSinCostoReal:
@@ -272,7 +276,7 @@ class TestTC_SIS_11_CierreOrdenSinCostoReal:
         rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)
         rmi_registry.crear_orden(
             id_orden="ORD-004", id_equipo="EQ-001",
-            tipo_mantenimiento="Correctivo", fecha_programada="2026-06-13",
+            tipo_mantenimiento="Mecanico", fecha_programada="2026-06-13",
             descripcion_trabajo="Reparación de bomba", costo_estimado=2000.0,
         )
         rmi_registry.asignar_tecnico("ORD-004", "TEC-002")
@@ -298,7 +302,7 @@ class TestTC_SIS_12_CancelarOrdenProgramada:
         rmi_registry.alta_equipo(**EQUIPO_MECANICO)
         rmi_registry.crear_orden(
             id_orden="ORD-005", id_equipo="EQ-001",
-            tipo_mantenimiento="Preventivo", fecha_programada="2026-06-15",
+            tipo_mantenimiento="Mecanico", fecha_programada="2026-06-15",
             descripcion_trabajo="Revisión preventiva", costo_estimado=1000.0,
         )
 
@@ -324,7 +328,7 @@ class TestTC_SIS_18_TecnicoConOrdenActivaAsignacion:
 
         rmi_registry.crear_orden(
             id_orden="ORD-ACT", id_equipo="EQ-002",
-            tipo_mantenimiento="Correctivo", fecha_programada="2026-06-10",
+            tipo_mantenimiento="Electrico", fecha_programada="2026-06-10",
             descripcion_trabajo="Falla eléctrica", costo_estimado=1500.0,
         )
         rmi_registry.asignar_tecnico("ORD-ACT", "TEC-003")
@@ -338,7 +342,7 @@ class TestTC_SIS_18_TecnicoConOrdenActivaAsignacion:
         )
         rmi_registry.crear_orden(
             id_orden="ORD-NEW", id_equipo="EQ-004",
-            tipo_mantenimiento="Preventivo", fecha_programada="2026-06-20",
+            tipo_mantenimiento="Electrico", fecha_programada="2026-06-20",
             descripcion_trabajo="Revisión panel", costo_estimado=700.0,
         )
 
@@ -365,7 +369,7 @@ class TestTC_SIS_19_HistoricoFiltroEquipo:
         ):
             rmi_registry.crear_orden(
                 id_orden=f"ORD-H0{i}", id_equipo=eq,
-                tipo_mantenimiento="Preventivo",
+                tipo_mantenimiento="Electrico",
                 fecha_programada=f"2026-01-{i:02d}",
                 descripcion_trabajo="Histórico", costo_estimado=500.0,
             )
@@ -381,7 +385,6 @@ class TestTC_SIS_19_HistoricoFiltroEquipo:
         for orden in resultado:
             assert orden["id_equipo"] == "EQ-001"
 
-@pytest.mark.skip(reason="La consulta por filtros no se encuentra implementada aún")
 class TestTC_SIS_20_HistoricoFiltroFechas:
     """TC-SIS-20 | RF-17"""
 
@@ -402,7 +405,7 @@ class TestTC_SIS_20_HistoricoFiltroFechas:
         for id_orden, f_prog, f_cierre in ordenes:
             rmi_registry.crear_orden(
                 id_orden=id_orden, id_equipo="EQ-001",
-                tipo_mantenimiento="Preventivo", fecha_programada=f_prog,
+                tipo_mantenimiento="Electrico", fecha_programada=f_prog,
                 descripcion_trabajo="Revisión", costo_estimado=500.0,
             )
             rmi_registry.asignar_tecnico(id_orden, "TEC-002")
@@ -433,7 +436,7 @@ class TestTC_SIS_22_CostoEstimadoNegativo:
         with pytest.raises((ReglaNegocioError, ValueError)):
             rmi_registry.crear_orden(
                 id_orden="ORD-NEG", id_equipo="EQ-001",
-                tipo_mantenimiento="Preventivo",
+                tipo_mantenimiento="Electrico",
                 fecha_programada="2026-06-20",
                 descripcion_trabajo="Revisión",
                 costo_estimado=-500.0,
@@ -453,7 +456,7 @@ class TestTC_SIS_23_FechaCierreAnteriorFechaInicio:
         rmi_registry.alta_tecnico(**TECNICO_MECANICO_C2)
         rmi_registry.crear_orden(
             id_orden="ORD-006", id_equipo="EQ-001",
-            tipo_mantenimiento="Preventivo", fecha_programada="2026-05-10",
+            tipo_mantenimiento="Mecanico", fecha_programada="2026-05-10",
             descripcion_trabajo="Revisión de sellos", costo_estimado=800.0,
         )
         rmi_registry.asignar_tecnico("ORD-006", "TEC-002")
@@ -482,7 +485,7 @@ class TestTC_SIS_24_ReasignacionTecnico:
         )
         rmi_registry.crear_orden(
             id_orden="ORD-007", id_equipo="EQ-001",
-            tipo_mantenimiento="Preventivo", fecha_programada="2026-06-25",
+            tipo_mantenimiento="Mecanico", fecha_programada="2026-06-25",
             descripcion_trabajo="Mantenimiento mensual", costo_estimado=1300.0,
         )
         rmi_registry.asignar_tecnico("ORD-007", "TEC-002")  # Carlos López

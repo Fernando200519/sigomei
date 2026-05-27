@@ -15,7 +15,7 @@ class TestRN04IntegridadReferencial:
         CUANDO se intenta darlo de baja
         ENTONCES debe lanzar IntegridadReferencialError
         """
-        equipo_service._dao.buscar_por_id.return_value = {"id_equipo": "EQ-001"}
+        equipo_service._dao.obtener_id_equipo_int.return_value = 1
         equipo_service._dao.tiene_ordenes_vinculadas.return_value = True
 
         with pytest.raises(IntegridadReferencialError):
@@ -27,7 +27,7 @@ class TestRN04IntegridadReferencial:
         CUANDO se intenta darlo de baja
         ENTONCES debe retornar True sin lanzar excepcion
         """
-        equipo_service._dao.buscar_por_id.return_value = {"id_equipo": "EQ-999"}
+        equipo_service._dao.obtener_id_equipo_int.return_value = 999
         equipo_service._dao.tiene_ordenes_vinculadas.return_value = False
         equipo_service._dao.eliminar.return_value = True
 
@@ -40,7 +40,8 @@ class TestRN04IntegridadReferencial:
         CUANDO se intenta darlo de baja
         ENTONCES debe lanzar IntegridadReferencialError
         """
-        tecnico_service._dao.buscar_por_id.return_value = {"id_tecnico": "TEC-001"}
+        tecnico_service._usuario_dao.obtener_id_usuario_int.return_value = 1
+        tecnico_service._dao.buscar_por_id.return_value = {"id_tecnico_int": 1, "id_tecnico": "TEC-001"}
         tecnico_service._dao.tiene_ordenes_activas.return_value = True
 
         with pytest.raises(IntegridadReferencialError):
@@ -52,17 +53,21 @@ class TestRN04IntegridadReferencial:
         CUANDO se intenta darlo de baja
         ENTONCES debe retornar True sin lanzar excepcion
         """
-        tecnico_service._dao.buscar_por_id.return_value = {"id_tecnico": "TEC-999"}
+        tecnico_service._usuario_dao.obtener_id_usuario_int.return_value = 999
+        tecnico_service._dao.buscar_por_id.return_value = {"id_tecnico_int": 999, "id_tecnico": "TEC-999"}
         tecnico_service._dao.tiene_ordenes_activas.return_value = False
         tecnico_service._dao.actualizar.return_value = True
 
         resultado = tecnico_service.baja_tecnico("TEC-999")
         assert resultado is True
 
-    def test_crear_orden_equipo_no_existente_es_invalido(
-        self, orden_service
-    ):
-        orden_service._equipo_dao.buscar_por_id.return_value = None
+    def test_crear_orden_equipo_no_existente_es_invalido(self, orden_service):
+        """
+        DADO   un identificador de equipo que no existe en el sistema
+        CUANDO el servicio intenta resolver su ID entero antes de la inserción
+        ENTONCES debe cortar el flujo y lanzar EntidadNoEncontradaError
+        """
+        orden_service._equipo_dao.obtener_id_equipo_int.return_value = None
 
         with pytest.raises(EntidadNoEncontradaError):
             orden_service.crear_orden(
@@ -73,62 +78,65 @@ class TestRN04IntegridadReferencial:
                 "Cambio de piezas",
                 1000.0
             )
-    def test_consultar_orden_no_existente_es_invalido(
-        self, orden_service
-    ):
-        orden_service._dao.buscar_por_id.return_value = None
+
+    def test_consultar_orden_no_existente_es_invalido(self, orden_service):
+        """
+        DADO   un identificador de orden que no existe en el sistema
+        CUANDO el servicio intenta resolver su ID entero para buscarla
+        ENTONCES debe lanzar EntidadNoEncontradaError
+        """
+        orden_service._dao.obtener_id_orden_int.return_value = None
 
         with pytest.raises(EntidadNoEncontradaError):
-            orden_service.consultar_orden(
-                "OM-001"
-            )
+            orden_service.consultar_orden("OM-001")
 
-    def test_asignar_tecnico_orden_no_existente_es_invalido(
-        self, orden_service
-    ):
-        orden_service._dao.buscar_por_id.return_value = None
+    def test_asignar_tecnico_orden_no_existente_es_invalido(self, orden_service):
+        """
+        DADO   una orden inexistente
+        CUANDO se intenta invocar el proceso de asignación de personal
+        ENTONCES el resolvedor inicial de la orden debe disparar EntidadNoEncontradaError
+        """
+        orden_service._dao.obtener_id_orden_int.return_value = None
 
         with pytest.raises(EntidadNoEncontradaError):
-            orden_service.asignar_tecnico(
-                "OM-001",
-                "TEC-001"
-            )
+            orden_service.asignar_tecnico("OM-001", "TEC-001")
 
-    def test_asignar_tecnico_no_existente_es_invalido(
-        self, orden_service
-    ):
+    def test_asignar_tecnico_no_existente_es_invalido(self, orden_service):
+        """
+        DADO   una orden válida pero un identificador de técnico inexistente
+        CUANDO el servicio intenta resolver la clave primaria del técnico
+        ENTONCES debe lanzar EntidadNoEncontradaError
+        """
+        orden_service._dao.obtener_id_orden_int.return_value = 1
         orden_service._dao.buscar_por_id.return_value = {
+            "id_orden_int": 1,
             "id_orden": "OM-001",
-            "id_equipo": "EQ-001"
+            "id_equipo_int": 10
         }
-
-        orden_service._tecnico_dao.buscar_por_id.return_value = None
+        orden_service._tecnico_dao.obtener_id_tecnico_int.return_value = None
 
         with pytest.raises(EntidadNoEncontradaError):
-            orden_service.asignar_tecnico(
-                "OM-001",
-                "TEC-001"
-            )
+            orden_service.asignar_tecnico("OM-001", "TEC-001")
 
     def test_asignar_tecnico_equipo_vinculado_no_existente_es_invalido(
-        self, 
-        orden_service,
-        tecnico_activo_electricista_nivel2
+        self, orden_service, tecnico_activo_electricista_nivel2
     ):
+        """
+        DADO   una orden y un técnico existentes
+        CUANDO la llave foránea id_equipo_int de la orden apunta a un registro huérfano o borrado
+        ENTONCES la búsqueda individual del equipo debe lanzar EntidadNoEncontradaError
+        """
+        orden_service._dao.obtener_id_orden_int.return_value = 1
         orden_service._dao.buscar_por_id.return_value = {
+            "id_orden_int": 1,
             "id_orden": "OM-001",
-            "id_equipo": "EQ-001",
+            "id_equipo_int": 10, 
         }
 
-        orden_service._tecnico_dao.buscar_por_id.return_value = (
-            tecnico_activo_electricista_nivel2
-        )
-
+        orden_service._tecnico_dao.obtener_id_tecnico_int.return_value = 4
+        orden_service._tecnico_dao.buscar_por_id.return_value = tecnico_activo_electricista_nivel2
+        
         orden_service._equipo_dao.buscar_por_id.return_value = None
 
         with pytest.raises(EntidadNoEncontradaError):
-            orden_service.asignar_tecnico(
-                "OM-001",
-                "TEC-001"
-            )
-
+            orden_service.asignar_tecnico("OM-001", "TEC-001")

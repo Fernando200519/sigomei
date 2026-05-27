@@ -1,6 +1,6 @@
 """
-RN-03: Un tecnico con estatus 'Inactivo' no puede ser
-        asignado a nuevas ordenes.
+RN-03: Un técnico con estatus 'Inactivo' no puede ser
+        asignado a nuevas órdenes.
 """
 
 import pytest
@@ -13,16 +13,21 @@ class TestRN03TecnicoInactivo:
         self, orden_service, equipo_electrico_alta, tecnico_inactivo
     ):
         """
-        DADO   un tecnico con estatus 'Inactivo'
+        DADO   un técnico con estatus 'Inactivo'
         CUANDO se intenta asignarlo a una orden en estado 'Programada'
         ENTONCES debe lanzar ReglaNegocioError
         """
+        orden_service._dao.obtener_id_orden_int.return_value = 10
+        orden_service._tecnico_dao.obtener_id_tecnico_int.return_value = 3
+
         orden_service._dao.buscar_por_id.return_value = {
+            "id_orden_int": 10,
             "id_orden": "OM-010",
-            "id_equipo": "EQ-001",
+            "id_equipo_int": 1,  # <-- Cambiado para evitar KeyError
             "estado_orden": "Programada",
-            "id_tecnico": None,
+            "id_tecnico_int": None,
         }
+        
         orden_service._equipo_dao.buscar_por_id.return_value = equipo_electrico_alta
         orden_service._tecnico_dao.buscar_por_id.return_value = tecnico_inactivo
 
@@ -33,21 +38,26 @@ class TestRN03TecnicoInactivo:
         self, orden_service, equipo_electrico_alta, tecnico_activo_electricista_nivel2
     ):
         """
-        DADO   un tecnico con estatus 'Activo' y especialidad correcta
+        DADO   un técnico con estatus 'Activo' y especialidad correcta
         CUANDO se intenta asignarlo
         ENTONCES no debe lanzar ReglaNegocioError
         """
+        orden_service._dao.obtener_id_orden_int.return_value = 10
+        orden_service._tecnico_dao.obtener_id_tecnico_int.return_value = 2
+
         orden_service._dao.buscar_por_id.return_value = {
+            "id_orden_int": 10,
             "id_orden": "OM-010",
-            "id_equipo": "EQ-001",
+            "id_equipo_int": 1,
             "estado_orden": "Programada",
-            "id_tecnico": None,
+            "id_tecnico_int": None,
         }
+        
         orden_service._equipo_dao.buscar_por_id.return_value = equipo_electrico_alta
         orden_service._tecnico_dao.buscar_por_id.return_value = tecnico_activo_electricista_nivel2
         orden_service._dao.asignar_tecnico.return_value = True
-        orden_service._dao.listar_por_filtros.return_value = None
-
+        
+        orden_service._dao.listar_por_filtros.return_value = []
 
         resultado = orden_service.asignar_tecnico("OM-010", "TEC-002")
         assert resultado is True

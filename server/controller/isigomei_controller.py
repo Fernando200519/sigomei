@@ -1,3 +1,4 @@
+import datetime
 import functools
 import logging
 import Pyro5.api
@@ -97,9 +98,16 @@ class ISigomeiController:
 
     #  Técnicos
     @_pyro_safe
-    def alta_tecnico(self, id_tecnico, nombre_completo, rfc, telefono,
-                     correo, especialidad, nivel_certificacion,
-                     fecha_ingreso, estatus) -> bool:
+    def alta_tecnico(self, 
+                     id_tecnico, 
+                     nombre_completo, 
+                     rfc, 
+                     telefono,
+                     correo, 
+                     especialidad, 
+                     nivel_certificacion,
+                     fecha_ingreso, 
+                     estatus) -> bool:
         return self._tecnico_svc.alta_tecnico(
             id_tecnico, nombre_completo, rfc, telefono, correo,
             especialidad, nivel_certificacion, fecha_ingreso, estatus,
@@ -121,6 +129,10 @@ class ISigomeiController:
     def listar_tecnicos(self) -> list:
         """Expone remotamente el listado completo de técnicos."""
         return self._tecnico_svc.listar_tecnicos()
+    
+    @_pyro_safe
+    def listar_tecnicos_por_filtro(self, filtros: dict) -> list:
+        return self._tecnico_svc.listar_tecnicos_por_filtro(filtros)
 
     #  Órdenes de Mantenimiento
     @_pyro_safe
@@ -154,5 +166,57 @@ class ISigomeiController:
         return self._orden_svc.cancelar_orden(id_orden)
 
     @_pyro_safe
-    def listar_ordenes_por_filtro(self, filtros: dict) -> list:
-        return self._orden_svc.listar_ordenes_por_filtro(filtros)
+    def listar_ordenes_por_filtro(self, 
+                                  filtros: dict) -> list:
+        return self._orden_svc.listar_ordenes_por_filtro(
+                                  filtros)
+    
+    # Usuarios
+    @_pyro_safe
+    def alta_usuario(
+        self,
+        nombre_completo,
+        rfc,
+        telefono,
+        correo,
+        hash_contrasena,
+        id_rol,
+        estado="Activo"
+    ) -> bool:
+
+        return self._usuario_svc.alta_usuario(
+            nombre_completo,
+            rfc,
+            telefono,
+            correo,
+            hash_contrasena,
+            id_rol,
+            estado
+        )
+
+
+    @_pyro_safe
+    def consultar_usuario(self, id_usuario: str) -> dict:
+        return self._usuario_svc.consultar_usuario(id_usuario)
+
+
+    @_pyro_safe
+    def modificar_usuario(
+        self,
+        id_usuario: str,
+        datos_actualizados: dict
+    ) -> bool:
+        return self._usuario_svc.modificar_usuario(
+            id_usuario,
+            datos_actualizados
+        )
+
+
+    @_pyro_safe
+    def baja_usuario(self, id_usuario: str) -> bool:
+        return self._usuario_svc.baja_usuario(id_usuario)
+
+
+    @_pyro_safe
+    def listar_usuarios(self) -> list:
+        return self._usuario_svc.listar_usuarios()

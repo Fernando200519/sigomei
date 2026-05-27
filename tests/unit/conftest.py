@@ -24,5 +24,6 @@ def equipo_service():
 def tecnico_service():
     svc = TecnicoService()
     svc._dao = MagicMock()
+    svc._usuario_dao = MagicMock()
     return svc
 

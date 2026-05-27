@@ -1,6 +1,0 @@
-2026-05-26 08:29:45  INFO      sigomei.server — Iniciando servidor SIGOMEI…
-2026-05-26 08:29:45  INFO      sigomei.server — Archivo de bitácora: D:\sigomei\logs\sigomei_20260526_082945.log
-2026-05-26 08:29:45  INFO      sigomei.server — Controlador registrado → PYRO:sigomei.controller@localhost:9090
-2026-05-26 08:29:45  INFO      sigomei.server — Esperando peticiones en localhost:9090 …
-2026-05-26 08:29:46  INFO      sigomei.server — Solicitud remota recibida: login | Parámetros: ('supervisor@sigomei.mx', 'Test1234')
-2026-05-26 08:29:46  INFO      sigomei.server — Operación exitosa: login | Respuesta: b9b37b70-e7b2-461d-a8e5-0ebc99fb7f3c

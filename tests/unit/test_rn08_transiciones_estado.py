@@ -35,18 +35,28 @@ class TestRN08TransicionesEstado:
         with pytest.raises(EstadoInvalidoError):
             orden_service.iniciar_ejecucion("OM-051", "2026-06-15")
 
-    def test_finalizar_orden_en_ejecucion_es_valido(self, orden_service):
+    def test_finalizar_con_todos_los_campos_es_exitoso(self, orden_service):
+        """
+        DADO   una orden en 'En ejecucion' con todos los datos correctos
+        CUANDO se finaliza
+        ENTONCES debe retornar True
+        """
+        from datetime import datetime
+
+        orden_service._dao.obtener_id_orden_int.return_value = 32
+
         orden_service._dao.buscar_por_id.return_value = {
-            "id_orden": "OM-052",
+            "id_orden_int": 32,
+            "id_orden": "OM-032",
             "estado_orden": "En ejecucion",
-            "fecha_programada": "2026-06-01",
-            "fecha_inicio": "2026-06-03",
-            "id_tecnico": "TEC-002",
+            "fecha_programada": "2026-05-01",
+            "fecha_inicio": datetime(2026, 5, 5, 0, 0, 0),
+            "id_tecnico_int": 2,
         }
         orden_service._dao.actualizar_cierre.return_value = True
         orden_service._dao.actualizar_estado.return_value = True
 
-        resultado = orden_service.finalizar_orden("OM-052", "2026-06-10", 1800.0)
+        resultado = orden_service.finalizar_orden("OM-032", "2026-05-10", 2500.0)
         assert resultado is True
 
     def test_finalizar_orden_programada_lanza_excepcion(self, orden_service):

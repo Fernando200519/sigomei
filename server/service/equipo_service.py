@@ -38,7 +38,7 @@ class EquipoService:
         if estado_operativo not in ESTADOS_VALIDOS:
             raise ReglaNegocioError(f"Estado operativo inválido: '{estado_operativo}'")
 
-        if self._dao.buscar_por_id(id_equipo):
+        if self._dao.obtener_id_equipo_int(id_equipo):
             raise EntidadDuplicadaError(f"Ya existe un equipo con id '{id_equipo}'")
 
         if self._dao.buscar_por_numero_serie(numero_serie):
@@ -60,13 +60,16 @@ class EquipoService:
         return self._dao.insertar(datos)
         
     def consultar_equipo(self, id_equipo: str) -> dict:
-        equipo = self._dao.buscar_por_id(id_equipo)
-        if not equipo:
+        id_equipo_int = self._dao.obtener_id_equipo_int(id_equipo)
+        if not id_equipo_int:
             raise EntidadNoEncontradaError(f"Equipo '{id_equipo}' no encontrado")
+            
+        equipo = self._dao.buscar_por_id(id_equipo_int)
         return equipo
 
     def modificar_equipo(self, id_equipo: str, datos_actualizados: dict) -> bool:
-        if not self._dao.buscar_por_id(id_equipo):
+        id_equipo_int = self._dao.obtener_id_equipo_int(id_equipo)
+        if not id_equipo_int:
             raise EntidadNoEncontradaError(f"Equipo '{id_equipo}' no encontrado")
 
         if "tipo" in datos_actualizados and datos_actualizados["tipo"] not in TIPOS_VALIDOS:
@@ -74,20 +77,20 @@ class EquipoService:
         if "criticidad" in datos_actualizados and datos_actualizados["criticidad"] not in CRITICIDADES_VALIDAS:
             raise ReglaNegocioError(f"Criticidad inválida: '{datos_actualizados['criticidad']}'")
 
-        return self._dao.actualizar(id_equipo, datos_actualizados)
+        return self._dao.actualizar(id_equipo_int, datos_actualizados)
 
     def baja_equipo(self, id_equipo: str) -> bool:
-        if not self._dao.buscar_por_id(id_equipo):
+        id_equipo_int = self._dao.obtener_id_equipo_int(id_equipo)
+        if not id_equipo_int:
             raise EntidadNoEncontradaError(f"Equipo '{id_equipo}' no encontrado")
 
-        # RN-04: No se puede eliminar un equipo que tiene órdenes de mantenimiento
-        if self._dao.tiene_ordenes_vinculadas(id_equipo):
+        if self._dao.tiene_ordenes_vinculadas(id_equipo_int):
             raise IntegridadReferencialError(
                 f"RN-04: El equipo '{id_equipo}' tiene órdenes de mantenimiento "
                 "vinculadas y no puede eliminarse."
             )
 
-        return self._dao.eliminar(id_equipo)
+        return self._dao.eliminar(id_equipo_int)
 
     def listar_equipos(self) -> list:
         """Obtiene la lista completa de equipos registrados sin filtros complejos."""

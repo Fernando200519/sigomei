@@ -60,7 +60,8 @@ class TestDBConnection:
                 "server.dao.db_connection.psycopg2.connect"
             ) as mock_connect:
 
-                get_connection()
+                with get_connection():
+                    pass
 
         mock_connect.assert_called_once_with(
             **config_mock,

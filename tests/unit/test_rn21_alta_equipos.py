@@ -21,7 +21,7 @@ class TestRN21AltaEquipos:
         equipo_service,
         equipo_electrico_alta
     ):
-        equipo_service._dao.buscar_por_id.return_value = None
+        equipo_service._dao.obtener_id_equipo_int.return_value = None
         equipo_service._dao.buscar_por_numero_serie.return_value = None
         equipo_service._dao.insertar.return_value = True
 
@@ -117,7 +117,7 @@ class TestRN21AltaEquipos:
         self,
         equipo_service
     ):
-        equipo_service._dao.buscar_por_id.return_value = None
+        equipo_service._dao.obtener_id_equipo_int.return_value = None
 
         with pytest.raises(EntidadNoEncontradaError):
             equipo_service.consultar_equipo(
@@ -147,7 +147,7 @@ class TestRN21AltaEquipos:
         self,
         equipo_service
     ):
-        equipo_service._dao.buscar_por_id.return_value = None
+        equipo_service._dao.obtener_id_equipo_int.return_value = None
 
         with pytest.raises(EntidadNoEncontradaError):
             equipo_service.modificar_equipo(
@@ -210,7 +210,7 @@ class TestRN21AltaEquipos:
         self,
         equipo_service
     ):
-        equipo_service._dao.buscar_por_id.return_value = None
+        equipo_service._dao.obtener_id_equipo_int.return_value = None
 
         with pytest.raises(EntidadNoEncontradaError):
             equipo_service.baja_equipo(
