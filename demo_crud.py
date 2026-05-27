@@ -26,12 +26,12 @@ def main():
     proxy = SigomeiProxy()
 
     # CRUD Equipos
-    titulo("BLOQUE 1 · CRUD Equipos  (comunicación remota vía Pyro5)")
+    titulo("BLOQUE 1 · CRUD Equipos  (comunicacion remota via Pyro5)")
 
     info("Creando equipo EQ-100…")
     try:
         proxy.alta_equipo(
-            "EQ-100", "Motor Eléctrico Demo", "Eléctrico",
+            "EQ-100", "Motor Electrico Demo", "Electrico",
             "Siemens", "1LE1", "SN-DEMO-100", "Nave Demo",
             "2024-01-10", "Operativo", "Alta",
         )
@@ -61,26 +61,26 @@ def main():
 
     pausa()
 
-    #  CRUD Técnicos
-    titulo("BLOQUE 2 · CRUD Técnicos")
+    #  CRUD Tecnicos
+    titulo("BLOQUE 2 · CRUD Tecnicos")
 
-    info("Creando TEC-100 (Eléctrico, nivel I) — se usará para demostrar RN-07…")
+    info("Creando TEC-100 (Electrico, nivel I) — se usara para demostrar RN-07…")
     try:
         proxy.alta_tecnico(
-            "TEC-100", "Demo Técnico Uno", "DEMO800101XYZ",
+            "TEC-100", "Demo Tecnico Uno", "DEMO800101XYZ",
             "9990000001", "demo1@sigomei.mx",
-            "Eléctrico", "I", "2024-03-01", "Activo",
+            "Electrico", "I", "2024-03-01", "Activo",
         )
         ok("alta_tecnico('TEC-100') nivel I → OK")
     except Exception as e:
         fallo(f"alta_tecnico TEC-100: {_msg(e)}")
 
-    info("Creando TEC-101 (Eléctrico, nivel II) — se usará para el éxito final…")
+    info("Creando TEC-101 (Electrico, nivel II) — se usara para el exito final…")
     try:
         proxy.alta_tecnico(
-            "TEC-101", "Demo Técnico Dos", "DEMO900202XYZ",
+            "TEC-101", "Demo Tecnico Dos", "DEMO900202XYZ",
             "9990000002", "demo2@sigomei.mx",
-            "Eléctrico", "II", "2023-06-15", "Activo",
+            "Electrico", "II", "2023-06-15", "Activo",
         )
         ok("alta_tecnico('TEC-101') nivel II → OK")
     except Exception as e:
@@ -88,7 +88,7 @@ def main():
 
     pausa()
 
-    info("Consultando técnico TEC-101…")
+    info("Consultando tecnico TEC-101…")
     try:
         tec = proxy.consultar_tecnico("TEC-101")
         ok(f"consultar_tecnico → {tec['nombre_completo']} | "
@@ -107,14 +107,14 @@ def main():
 
     pausa()
 
-    #  CRUD Órdenes
-    titulo("BLOQUE 3 · CRUD Órdenes de Mantenimiento")
+    #  CRUD ordenes
+    titulo("BLOQUE 3 · CRUD ordenes de Mantenimiento")
 
-    info("Creando orden OM-100 para EQ-100 (Eléctrico, criticidad Alta)…")
+    info("Creando orden OM-100 para EQ-100 (Electrico, criticidad Alta)…")
     try:
         proxy.crear_orden(
             "OM-100", "EQ-100", "Preventivo",
-            "2026-06-01", "Revisión general del motor de demostración", 3500.0,
+            "2026-06-01", "Revision general del motor de demostracion", 3500.0,
         )
         ok("crear_orden('OM-100') → OK  |  estado: Programada")
     except Exception as e:
@@ -136,35 +136,35 @@ def main():
     titulo("BLOQUE 4 · Reglas de Negocio — el servidor como 'cerebro'")
 
     print("\n  ── Escenario RECHAZADO · RN-01: especialidad incorrecta ──")
-    info("Asignando TEC-001 (especialidad Mecánico) a OM-100 (equipo Eléctrico)…")
+    info("Asignando TEC-001 (especialidad Mecanico) a OM-100 (equipo Electrico)…")
     info("Debe ser RECHAZADO por RN-01")
     try:
         proxy.asignar_tecnico("OM-100", "TEC-001")
-        fallo("Se asignó cuando NO debía ← ERROR en implementación")
+        fallo("Se asigno cuando NO debia ← ERROR en implementacion")
     except Exception as e:
-        ok(f"Servidor rechazó → {_msg(e)}")
+        ok(f"Servidor rechazo → {_msg(e)}")
 
     pausa()
 
-    print("\n  ── Escenario RECHAZADO · RN-07: nivel de certificación insuficiente ──")
-    info("Asignando TEC-100 (Eléctrico, nivel I) a OM-100 (criticidad Alta)…")
+    print("\n  ── Escenario RECHAZADO · RN-07: nivel de certificacion insuficiente ──")
+    info("Asignando TEC-100 (Electrico, nivel I) a OM-100 (criticidad Alta)…")
     info("Especialidad coincide PERO nivel I < II → debe ser RECHAZADO por RN-07")
     try:
         proxy.asignar_tecnico("OM-100", "TEC-100")
-        fallo("Se asignó cuando NO debía ← ERROR en implementación")
+        fallo("Se asigno cuando NO debia ← ERROR en implementacion")
     except Exception as e:
-        ok(f"Servidor rechazó → {_msg(e)}")
+        ok(f"Servidor rechazo → {_msg(e)}")
 
     pausa()
 
     print("\n  ── Escenario EXITOSO · RN-01 + RN-07 cumplidas ──")
-    info("Asignando TEC-101 (Eléctrico, nivel II) a OM-100…")
+    info("Asignando TEC-101 (Electrico, nivel II) a OM-100…")
     info("Especialidad coincide Y nivel II ≥ II → debe ser ACEPTADO")
     try:
         proxy.asignar_tecnico("OM-100", "TEC-101")
         ok("asignar_tecnico('OM-100', 'TEC-101') → ACEPTADO ✓")
     except Exception as e:
-        fallo(f"No debió rechazarse: {_msg(e)}")
+        fallo(f"No debio rechazarse: {_msg(e)}")
 
     pausa()
 
@@ -192,23 +192,23 @@ def main():
     #  DELETE
     titulo("BLOQUE 6 · DELETE — limpieza de datos de demo")
 
-    info("Intentando eliminar EQ-100 (tiene órdenes vinculadas) → RECHAZADO (RN-04)…")
+    info("Intentando eliminar EQ-100 (tiene ordenes vinculadas) → RECHAZADO (RN-04)…")
     try:
         proxy.baja_equipo("EQ-100")
-        fallo("Se eliminó cuando NO debía")
+        fallo("Se elimino cuando NO debia")
     except Exception as e:
         ok(f"RN-04 activo → {_msg(e)}")
 
     pausa()
 
-    info("Eliminando TEC-100 (sin órdenes activas)…")
+    info("Eliminando TEC-100 (sin ordenes activas)…")
     try:
         proxy.baja_tecnico("TEC-100")
         ok("baja_tecnico('TEC-100') → OK")
     except Exception as e:
         fallo(f"baja_tecnico: {_msg(e)}")
 
-    titulo("FIN DE LA DEMOSTRACIÓN  —  revisa los logs del servidor")
+    titulo("FIN DE LA DEMOSTRACIoN  —  revisa los logs del servidor")
     print()
 
 

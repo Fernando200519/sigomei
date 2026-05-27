@@ -16,7 +16,6 @@ class OrdenDAO:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, datos)
-            conn.commit()
         return True
 
     def buscar_por_id(self, id_orden: str) -> dict | None:
@@ -41,7 +40,6 @@ class OrdenDAO:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (nuevo_estado, id_orden))
-            conn.commit()
         return True
 
     def asignar_tecnico(self, id_orden: str, id_tecnico: str) -> bool:
@@ -49,7 +47,6 @@ class OrdenDAO:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (id_tecnico, id_orden))
-            conn.commit()
         return True
 
     def actualizar_inicio(self, id_orden: str, fecha_inicio: str) -> bool:
@@ -57,7 +54,6 @@ class OrdenDAO:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (fecha_inicio, id_orden))
-            conn.commit()
         return True
 
     def actualizar_cierre(self, id_orden: str, fecha_cierre: str,
@@ -70,5 +66,4 @@ class OrdenDAO:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (fecha_cierre, costo_real, id_orden))
-            conn.commit()
         return True

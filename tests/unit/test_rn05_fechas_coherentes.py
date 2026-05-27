@@ -48,7 +48,7 @@ class TestRN05FechasCoherentes:
         """
         DADO   fecha_programada=2026-06-01, fecha_inicio=2026-06-05, fecha_cierre=2026-06-10
         CUANDO se finaliza la orden
-        ENTONCES debe retornar True sin lanzar excepción
+        ENTONCES debe retornar True sin lanzar excepcion
         """
         orden_service._dao.buscar_por_id.return_value = {
             "id_orden": "OM-022",

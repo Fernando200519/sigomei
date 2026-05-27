@@ -21,19 +21,19 @@ EQUIPO_ALTA_CRITICIDAD = dict(
 )
 
 TECNICO_MECANICO_C1 = dict(
-    id_tecnico="TEC-001", nombre_completo="Juan Pérez",
+    id_tecnico="TEC-001", nombre_completo="Juan Perez",
     rfc="PEJA850101AAA", telefono="9210001001",
     correo="juan@sigomei.mx", especialidad="Mecanico",
     nivel_certificacion="I", fecha_ingreso="2022-01-01", estatus="Activo",
 )
 TECNICO_MECANICO_C2 = dict(
-    id_tecnico="TEC-002", nombre_completo="Carlos López",
+    id_tecnico="TEC-002", nombre_completo="Carlos Lopez",
     rfc="LOCC850101BBB", telefono="9210001002",
     correo="carlos@sigomei.mx", especialidad="Mecanico",
     nivel_certificacion="II", fecha_ingreso="2022-01-01", estatus="Activo",
 )
 TECNICO_ELECTRICO_C2 = dict(
-    id_tecnico="TEC-003", nombre_completo="María García",
+    id_tecnico="TEC-003", nombre_completo="Maria Garcia",
     rfc="GAMA900101CCC", telefono="9210001003",
     correo="maria@sigomei.mx", especialidad="Electrico",
     nivel_certificacion="II", fecha_ingreso="2022-01-01", estatus="Activo",

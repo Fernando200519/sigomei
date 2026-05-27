@@ -48,6 +48,9 @@ class SigomeiProxy:
     def baja_equipo(self, id_equipo: str) -> bool:
         return self._remote.baja_equipo(id_equipo)
 
+    def listar_equipos(self) -> bool:
+        return self._remote.listar_equipos()
+    
     # Técnicos
     
     def alta_tecnico(
@@ -68,6 +71,9 @@ class SigomeiProxy:
 
     def baja_tecnico(self, id_tecnico: str) -> bool:
         return self._remote.baja_tecnico(id_tecnico)
+
+    def listar_tecnicos(self) -> list:
+        return self._remote.listar_tecnicos()
 
     # Órdenes de Mantenimiento
     

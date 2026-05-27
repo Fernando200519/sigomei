@@ -24,7 +24,7 @@ class TestRN02OrdenActivaDuplicada:
         with pytest.raises(EntidadDuplicadaError):
             orden_service.crear_orden(
                 "OM-002", "EQ-001", "Preventivo",
-                "2026-06-01", "Revisión general", 1500.0
+                "2026-06-01", "Revision general", 1500.0
             )
 
     def test_crear_orden_mismo_equipo_diferente_fecha_es_valida(self, orden_service):

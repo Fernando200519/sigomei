@@ -90,6 +90,10 @@ class ISigomeiController:
     @_pyro_safe
     def baja_equipo(self, id_equipo: str) -> bool:
         return self._equipo_svc.baja_equipo(id_equipo)
+    
+    @_pyro_safe
+    def listar_equipos(self) -> list:
+        return self._equipo_svc.listar_equipos()
 
     #  Técnicos
     @_pyro_safe
@@ -112,6 +116,11 @@ class ISigomeiController:
     @_pyro_safe
     def baja_tecnico(self, id_tecnico: str) -> bool:
         return self._tecnico_svc.baja_tecnico(id_tecnico)
+
+    @_pyro_safe
+    def listar_tecnicos(self) -> list:
+        """Expone remotamente el listado completo de técnicos."""
+        return self._tecnico_svc.listar_tecnicos()
 
     #  Órdenes de Mantenimiento
     @_pyro_safe

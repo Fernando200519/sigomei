@@ -193,14 +193,14 @@ class OrdenService:
         return self._dao.listar_por_filtros(filtros)
 
     def _validar_transicion(self, estado_actual: str, estado_nuevo: str) -> None:
-        """RN-08: verifica que la transición sea permitida.
+        """RN-08: verifica que la transicion sea permitida.
         Normaliza NFC para manejar diferencias de encoding entre Python y PostgreSQL.
         """
         estado_actual_nfc = _nfc(estado_actual)
         permitidos = TRANSICIONES_VALIDAS.get(estado_actual_nfc, [])
         if _nfc(estado_nuevo) not in [_nfc(p) for p in permitidos]:
             raise EstadoInvalidoError(
-                f"RN-08: Transición inválida de '{estado_actual}' → '{estado_nuevo}'. "
+                f"RN-08: Transicion inválida de '{estado_actual}' → '{estado_nuevo}'. "
                 f"Transiciones permitidas: {permitidos}."
             )
 

@@ -1,5 +1,5 @@
 """
-RN-06: Solo las órdenes en estado 'Finalizada' deben tener
+RN-06: Solo las ordenes en estado 'Finalizada' deben tener
         costo_real y fecha_cierre registrados.
         → Finalizar sin costo_real o sin fecha_cierre debe fallar.
 """

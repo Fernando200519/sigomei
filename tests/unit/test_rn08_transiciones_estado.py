@@ -50,7 +50,7 @@ class TestRN08TransicionesEstado:
         assert resultado is True
 
     def test_finalizar_orden_programada_lanza_excepcion(self, orden_service):
-        """No se puede finalizar una orden que no está 'En ejecucion'."""
+        """No se puede finalizar una orden que no está 'En Ejecucion'."""
         orden_service._dao.buscar_por_id.return_value = {
             "id_orden": "OM-053",
             "estado_orden": "Programada",
