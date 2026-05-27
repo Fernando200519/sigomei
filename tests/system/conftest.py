@@ -17,7 +17,6 @@ from server.exceptions.exceptions import (
     AutenticacionError,
 )
 
-# El cliente necesita el mismo mapeo que el servidor para deserializar
 _EXCEPCIONES_SIGOMEI = {
     "EntidadDuplicadaError":      EntidadDuplicadaError,
     "EntidadNoEncontradaError":   EntidadNoEncontradaError,
@@ -25,7 +24,6 @@ _EXCEPCIONES_SIGOMEI = {
     "IntegridadReferencialError": IntegridadReferencialError,
     "EstadoInvalidoError":        EstadoInvalidoError,
     "AutenticacionError":         AutenticacionError,
-    # Mantener también las rutas completas por si acaso
     "server.exceptions.exceptions.EntidadDuplicadaError":      EntidadDuplicadaError,
     "server.exceptions.exceptions.EntidadNoEncontradaError":   EntidadNoEncontradaError,
     "server.exceptions.exceptions.ReglaNegocioError":          ReglaNegocioError,
@@ -68,18 +66,12 @@ def gestionar_servidor_sigomei():
 
     comando = [sys.executable, "-m", "server.main_server"]
 
-    proceso_servidor = subprocess.Popen(
-        comando,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
-    )
+    proceso_servidor = subprocess.Popen(comando)
 
     try:
         _esperar_puerto("localhost", 9090, timeout=7.0)
         print("[INFO] ¡Servidor SIGOMEI online y listo!")
     except RuntimeError:
-        # Leer stderr para exponer la causa real del fallo
         stderr_output = proceso_servidor.stderr.read() if proceso_servidor.stderr else "sin salida"
         proceso_servidor.kill()
         raise RuntimeError(
@@ -102,7 +94,6 @@ def gestionar_servidor_sigomei():
     print("[INFO] Servidor SIGOMEI cerrado limpiamente.")
 
 
-# ── Wrapper que convierte el fallback de Pyro5 al tipo SIGOMEI correcto ──────
 class _SigomeiProxy:
     """
     Pyro5 no puede reconstruir excepciones custom en el cliente y hace fallback
@@ -147,17 +138,15 @@ def rmi_registry():
     uri = "PYRO:sigomei.controller@localhost:9090"
     with Proxy(uri) as proxy:
         proxy._pyroTimeout = 10
-        yield _SigomeiProxy(proxy)   # ← envuelto en el proxy traductor
+        yield _SigomeiProxy(proxy)
 
 @pytest.fixture(scope="function")
 def db_test():
     """Limpia las tablas antes de cada test para garantizar un ambiente aislado."""
     with get_connection() as connection:
         with connection.cursor() as cursor:
-            # El orden importa: primero las tablas con FK hacia otras
             cursor.execute("DELETE FROM ordenes_mantenimiento")
             cursor.execute("DELETE FROM tecnicos")
             cursor.execute("DELETE FROM equipos")
         connection.commit()
-    # yield sin valor: el test no necesita la conexion, solo la limpieza
     yield
