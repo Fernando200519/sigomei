@@ -2,7 +2,7 @@ import pytest
 from server.exceptions.exceptions import EntidadDuplicadaError
 
 EQUIPO_BASE = {
-    "id_equipo":         "EQ-001",
+    "id_equipo":         "EQ-009",
     "nombre":            "Bomba-01",
     "tipo":              "Mecanico",
     "marca":             "Grundfos",
@@ -26,13 +26,14 @@ class TestTC_SIS_14_Equipos:
         CUANDO se intenta registrar otro equipo con el mismo numero de serie
         ENTONCES el sistema rechaza el registro y lanza EntidadDuplicadaError.
         """
-        # PRECONDICIoN
-        rmi_registry.alta_equipo(**EQUIPO_BASE)
+        token = rmi_registry.login("carlos.ruiz@empresa.mx", "Test1234")
 
-        # ACCIoN: intentar duplicar el numero de serie
+        rmi_registry.alta_equipo(token, **EQUIPO_BASE)
+
         with pytest.raises(EntidadDuplicadaError):
             rmi_registry.alta_equipo(
-                id_equipo         = "EQ-002",   
+                token,
+                id_equipo         = "EQ-010",   
                 nombre            = "Bomba-02",  
                 tipo              = "Mecanico",
                 marca             = "Grundfos",

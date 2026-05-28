@@ -101,6 +101,14 @@ class TecnicoDAO:
             with conn.cursor() as cur:
                 cur.execute(sql, (id_tecnico_int,))
                 return cur.fetchone() is not None
+    
+    def tiene_ordenes(self, id_tecnico_int: int) -> bool:
+        """Valida si el técnico tiene cualquier orden registrada en el sistema (activas o históricas)."""
+        sql = "SELECT 1 FROM ordenes_mantenimiento WHERE id_tecnico_int = %s LIMIT 1"
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (id_tecnico_int,))
+                return cur.fetchone() is not None
             
     def existe_rfc(self, rfc: str) -> bool:
         sql = "SELECT 1 FROM usuarios WHERE rfc = %s LIMIT 1"

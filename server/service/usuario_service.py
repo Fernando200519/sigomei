@@ -5,6 +5,8 @@ from server.exceptions.exceptions import (
     ReglaNegocioError,
 )
 
+from werkzeug.security import generate_password_hash
+
 ESTADOS_VALIDOS = {"Activo", "Inactivo", "Suspendido"}
 
 ROLES_VALIDOS = {
@@ -26,9 +28,10 @@ class UsuarioService:
         rfc: str,
         telefono: str,
         correo: str,
-        hash_contrasena: str,
+        password: str,
         id_rol: int,
-        estado: str = "Activo",
+        id_usuario: str,
+        estado: str = "Activo"
     ) -> bool:
 
         if estado not in ESTADOS_VALIDOS:
@@ -40,19 +43,28 @@ class UsuarioService:
             raise EntidadDuplicadaError(
                 f"Ya existe un usuario con RFC '{rfc}'"
             )
-        
+
         if id_rol not in ROLES_VALIDOS:
             raise ReglaNegocioError(
                 f"Rol inválido: '{id_rol}'"
             )
-
 
         if self._dao.existe_correo(correo):
             raise EntidadDuplicadaError(
                 f"Ya existe un usuario con correo '{correo}'"
             )
 
+        if not password or len(password) < 8:
+            raise ReglaNegocioError(
+                "La contraseña debe tener mínimo 8 caracteres."
+            )
+
+        hash_contrasena = generate_password_hash(
+            password
+        )
+
         datos = {
+            "id_usuario": id_usuario,
             "nombre_completo": nombre_completo,
             "rfc": rfc,
             "telefono": telefono,
@@ -63,7 +75,7 @@ class UsuarioService:
         }
 
         return self._dao.insertar(datos)
-
+    
     def consultar_usuario(
         self,
         id_usuario: str

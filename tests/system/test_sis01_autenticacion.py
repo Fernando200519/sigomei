@@ -11,6 +11,20 @@ class TestTC_SIS_01_Autenticacion:
         ENTONCES el sistema retorna un token de sesión (str no vacío)
         y la sesión queda activa.
         """
+        token = rmi_registry.login("carlos.ruiz@empresa.mx", "Test1234")
+
+        rmi_registry.alta_usuario(
+            token,
+            "Supervisor Pedro",
+            "PAMF123456TZ9",
+            "9211111111",
+            "supervisor@sigomei.mx",
+            "Test1234",
+            3,
+            "SUP-005",
+            estado="Activo"
+        )
+        
         token = rmi_registry.login("supervisor@sigomei.mx", "Test1234")
 
         assert isinstance(token, str), "El token debe ser una cadena de texto"

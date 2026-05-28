@@ -1,4 +1,3 @@
-import datetime
 import unicodedata
 from datetime import date
 
@@ -130,7 +129,6 @@ class OrdenService:
                     f"Se requiere nivel ≥ II; el técnico tiene nivel '{tecnico['nivel_certificacion']}'."
                 )
         
-        # RN-16: Búsqueda usando el identificador entero interno de técnico
         ordenes_activas = self._dao.listar_por_filtros(
             {"id_tecnico_int": id_tecnico_int, "estado_orden": "En ejecucion"}
         )
@@ -139,6 +137,23 @@ class OrdenService:
             raise ReglaNegocioError("No es posible asignar un técnico con una orden En ejecucion")
 
         return self._dao.asignar_tecnico(id_orden_int, id_tecnico_int)
+    
+    def solicitar_cierre(self, id_orden: str, id_usuario_int: int) -> bool:
+        """Permite a un técnico solicitar el cierre de una orden en ejecución."""
+        orden = self._dao.buscar_por_id(self._dao.obtener_id_orden_int(id_orden))
+        
+        if not orden:
+            raise EntidadNoEncontradaError(f"La orden '{id_orden}' no existe.")
+
+        if orden["estado_orden"].lower() != "en ejecucion":
+            raise ReglaNegocioError(
+                f"No se puede solicitar el cierre. La orden está en estado '{orden['estado_orden']}'."
+            )
+
+        if orden["id_tecnico_int"] != id_usuario_int:
+            raise ReglaNegocioError("No está autorizado a solicitar el cierre de una orden asignada a otro técnico.")
+
+        return self._dao.actualizar_estado(orden["id_orden_int"], "Pendiente de cierre")
 
     def iniciar_ejecucion(self, id_orden, fecha_inicio):
         id_orden_int = self._dao.obtener_id_orden_int(id_orden)

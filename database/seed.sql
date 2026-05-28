@@ -1,50 +1,54 @@
-INSERT INTO equipos VALUES
-    ('EQ-001', 'Transformador T1',      'Electrico',  'ABB',      'TX-500',  'SN-AAA-001', 'Nave A', '2020-01-15', 'Operativo',          'Alta'),
-    ('EQ-002', 'Bomba Centrifuga B2',   'Mecanico',   'Grundfos', 'CM5',     'SN-BBB-002', 'Nave B', '2021-06-10', 'Operativo',          'Baja'),
-    ('EQ-003', 'Compresor C3',          'Neumatico',  'Atlas',    'GA-30',   'SN-CCC-003', 'Nave C', '2019-11-20', 'Operativo',          'Media'),
-    ('EQ-004', 'Panel Electrico P4',    'Electrico',  'Schneider','XB5',     'SN-DDD-004', 'Nave A', '2022-03-05', 'En Mantenimiento',   'Alta'),
-    ('EQ-005', 'Prensa Hidraulica H5',  'Hidraulico', 'Parker',   'PH-200',  'SN-EEE-005', 'Nave D', '2018-07-30', 'Operativo',          'Media'),
-    ('EQ-006', 'Ventilador V6',         'Mecanico',   'Fläkt',    'VX-100',  'SN-FFF-006', 'Nave B', '2023-01-01', 'Fuera de Servicio',  'Baja');
+INSERT INTO roles (nombre) VALUES
+    ('Administrador'),
+    ('Coordinador'),
+    ('Supervisor'),
+    ('Técnico');
 
+INSERT INTO usuarios (id_usuario_int, id_usuario, nombre_completo, rfc, telefono, correo, estado, hash_contrasena, id_rol) VALUES
+    (1, 'ADM-001', 'Ana García López',    'GALA850312HDF', '5512345678', 'ana.garcia@empresa.mx',   'Activo', 'scrypt:32768:8:1$48Axvx43Nkd9PWhg$a9a314227203375b7d26a623d3716b3de26eaad35c789839e72be8c33f89576117cbef04823350e81f0cf05e97efe2d83a62685ff54f779a91f60f6612dde83d', 1),
+    (2, 'COO-001', 'Carlos Ruiz Pérez',   'RUPC900101VER', '9211234567', 'carlos.ruiz@empresa.mx',  'Activo', 'scrypt:32768:8:1$miVy6XubkBXp5yxq$082bf4179ed5fe90802aea64ced2c240ac312abb3ca41db3478196b4a0cfe78c3ed6cc58436b25d1708d644febba1dede32e64ccdea706f8b8016324584b24d5', 2),
+    (3, 'SUP-001', 'Luis Torres Mendoza', 'TOML880615OAX', '9513456789', 'luis.torres@empresa.mx',  'Activo', 'scrypt:32768:8:1$kl1dDsegYDcRcFkU$374e623f56f5add6497eac5d9c3f8644e6aa2da78de37f5a3df7a1c2b17f0494c3dd5909e51b437d4b93c5338d9862dbf5a62c95068d155c1b1f2111fa81c244', 3),
+    (4, 'TEC-001', 'María Solano Vega',   'SOVM950320TAB', '9931234567', 'maria.solano@empresa.mx', 'Activo', 'scrypt:32768:8:1$L1rq5ir6a3ADbcyM$7f0a0edd2a5746d8fe2b904bb68c4b6be63fd5d34248fc11b89bd78feeed42dc884b52290e99b64659bc39a7225ea24e9b77b3357dcf65a6187a35271628e0b2', 4),
+    (5, 'TEC-002', 'Pedro Cano Díaz',     'CADP780901VER', '2295678901', 'pedro.cano@empresa.mx',   'Activo', 'scrypt:32768:8:1$xqRFrl4gzWz77llC$dc799a4e85fdf53b16ca25d10e1b7264a43303b2bf71d4d1969b48f32bc0ca9f61d6f6c5e27e0bfccd4701821fae44a7d4defb0827f87a6f80388ce98e9e72fc', 4);
 
-INSERT INTO tecnicos VALUES
-    ('TEC-001', 'Carlos Lopez',    'LOCA800101AAA', '9211234567', 'carlos@sigomei.mx', 'Mecanico',   'I',   '2022-03-01', 'Activo'),
-    ('TEC-002', 'Ana Perez',       'PEAA900202BBB', '9219876543', 'ana@sigomei.mx',    'Electrico',  'II',  '2021-07-15', 'Activo'),
-    ('TEC-003', 'Luis Ramos',      'RALU850303CCC', '9215554433', 'luis@sigomei.mx',   'Electrico',  'II',  '2019-01-10', 'Inactivo'),
-    ('TEC-004', 'Maria Torres',    'TOMA950404DDD', '9213330011', 'maria@sigomei.mx',  'Neumatico',  'III', '2020-09-20', 'Activo'),
-    ('TEC-005', 'Jorge Castillo',  'CAJG880505EEE', '9218887766', 'jorge@sigomei.mx',  'Hidraulico', 'II',  '2023-02-14', 'Activo');
+INSERT INTO sesiones (id_usuario_int, fecha_hora_inicio, fecha_hora_fin) VALUES
+    (1, '2025-05-10 08:01:00', '2025-05-10 16:30:00'),
+    (3, '2025-05-10 07:55:00', '2025-05-10 17:00:00'),
+    (4, '2025-05-11 08:10:00', NULL);
 
-INSERT INTO ordenes_mantenimiento
-    (id_orden, id_equipo, id_tecnico, tipo_mantenimiento,
-     fecha_programada, fecha_inicio, fecha_cierre,
-     descripcion_trabajo, costo_estimado, costo_real, estado_orden)
-VALUES
-    -- Orden programada (sin tecnico aun)
-    ('OM-001', 'EQ-001', NULL,      'Preventivo',
-     '2025-07-01', NULL, NULL,
-     'Revision semestral del transformador T1', 5000.00, NULL, 'Programada'),
+INSERT INTO tecnicos (id_tecnico_int, id_tecnico, fecha_ingreso, nivel_certificacion, especialidad) VALUES
+    (4, 'TEC-001', '2019-06-01', 'Nivel III – CMRP', 'Mecanico'),
+    (5, 'TEC-002', '2021-03-15', 'Nivel II – CRL',   'Electrico');
 
-    -- Orden en ejecucion
-    ('OM-002', 'EQ-002', 'TEC-001', 'Correctivo',
-     '2025-06-10', '2025-06-12', NULL,
-     'Reemplazo de rodamientos en bomba B2',    3200.00, NULL, 'En ejecucion'),
+INSERT INTO equipos (id_equipo_int, id_equipo, nombre, tipo, marca, modelo, numero_serie, ubicacion_planta, fecha_instalacion, estado_operativo, criticidad, registrado_por_int) VALUES
+    (1, 'EQ-001', 'Compresor Atlas 01',      'Compresor',     'Atlas Copco', 'GA-90',       'SN-ATL-001', 'Nave A – Zona 1',  '2018-04-20', 'Operativo',        'Alta',  NULL),
+    (2, 'EQ-002', 'Banda Transportadora B2', 'Transportador', 'Intralox',    'Series 400',  'SN-INT-002', 'Nave B – Línea 2', '2020-07-15', 'Operativo',        'Media', NULL),
+    (3, 'EQ-003', 'Motor Eléctrico M3',       'Motor',         'WEG',         'W22 200HP',   'SN-WEG-003', 'Nave C – Zona 4',  '2021-01-10', 'En Mantenimiento', 'Alta',  NULL),
+    (4, 'EQ-004', 'Bomba Hidráulica H4',     'Bomba',         'Parker',      'PVH074',      'SN-PAR-004', 'Sala de Bombas',   '2019-11-30', 'Operativo',        'Media', NULL),
+    (5, 'EQ-005', 'Torno CNC T5',            'Maquinado',     'Haas',        'ST-20',       'SN-HAS-005', 'Taller Mecánico',  '2022-03-25', 'Fuera de Servicio','Alta',  NULL);
 
-    -- Orden finalizada
-    ('OM-003', 'EQ-003', 'TEC-004', 'Preventivo',
-     '2025-05-01', '2025-05-03', '2025-05-05',
-     'Ajuste y lubricacion del compresor C3',   1500.00, 1650.00, 'Finalizada'),
+INSERT INTO estados_orden (nombre) VALUES
+    ('Programada'),
+    ('En ejecucion'),
+    ('Pendiente de cierre'),
+    ('Finalizada'),
+    ('Cancelada');
 
-    -- Orden cancelada
-    ('OM-004', 'EQ-006', NULL,      'Correctivo',
-     '2025-04-15', NULL, NULL,
-     'Reparacion de aspas del ventilador V6',   800.00,  NULL, 'Cancelada'),
+INSERT INTO ordenes_mantenimiento (id_orden_int, id_orden, id_equipo_int, id_tecnico_int, creado_por_int, descripcion_trabajo, tipo_mantenimiento, costo_estimado, costo_real, fecha_programada, fecha_inicio, fecha_cierre) VALUES
+    (1, 'OM-001', 1, 4, NULL, 'Cambio de filtros y revisión de presión de aceite del compresor Atlas 01.',           'Mecanico',   1500.00, 1320.00, '2025-05-05', '2025-05-05 09:00:00', '2025-05-05 13:30:00'),
+    (2, 'OM-002', 3, 5, NULL, 'Diagnóstico y reparación de variador de frecuencia en Motor WEG W22.',                'Electrico',  8000.00, NULL,    '2025-05-12', '2025-05-12 08:00:00', NULL),
+    (3, 'OM-003', 5, 4, NULL, 'Mantenimiento general de Torno CNC: calibración, lubricación y revisión eléctrica.', 'Mecanico',   3500.00, NULL,    '2025-05-15', NULL,                  NULL),
+    (4, 'OM-004', 2, 5, NULL, 'Inspección predictiva de banda – análisis de vibración y termografía.',               'Electrico',   900.00,  870.00, '2025-04-28', '2025-04-28 10:00:00', '2025-04-28 14:00:00'),
+    (5, 'OM-005', 4, 4, NULL, 'Sustitución de sellos mecánicos y revisión de caudal de bomba Parker.',               'Hidraulico', 2200.00, NULL,    '2025-05-20', NULL,                  NULL);
 
-    -- Orden programada para equipo con criticidad Alta
-    ('OM-005', 'EQ-004', NULL,      'Predictivo',
-     '2025-08-10', NULL, NULL,
-     'Termografia del panel electrico P4',      2200.00, NULL, 'Programada'),
-
-    -- Orden finalizada con equipo hidraulico
-    ('OM-006', 'EQ-005', 'TEC-005', 'Preventivo',
-     '2025-03-01', '2025-03-02', '2025-03-04',
-     'Cambio de sellos hidraulicos en prensa H5', 4100.00, 3980.00, 'Finalizada');
+INSERT INTO historial_estados_orden (id_orden_int, id_estado_orden, fecha_hora_inicio, fecha_hora_fin) VALUES
+    (1, 1, '2025-05-04 16:00:00', '2025-05-05 09:00:00'),
+    (1, 2, '2025-05-05 09:00:00', '2025-05-05 13:30:00'),
+    (1, 3, '2025-05-05 13:30:00', NULL),
+    (2, 1, '2025-05-11 10:00:00', '2025-05-12 08:00:00'),
+    (2, 2, '2025-05-12 08:00:00', '2025-05-13 15:00:00'),
+    (3, 1, '2025-05-10 09:00:00', NULL),
+    (4, 1, '2025-04-27 14:00:00', '2025-04-28 10:00:00'),
+    (4, 2, '2025-04-28 10:00:00', '2025-04-28 14:00:00'),
+    (4, 3, '2025-04-28 14:00:00', NULL),
+    (5, 1, '2025-05-15 08:00:00', NULL);

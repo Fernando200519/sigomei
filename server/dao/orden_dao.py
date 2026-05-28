@@ -1,4 +1,3 @@
-from ast import arg
 import datetime
 from server.dao.db_connection import get_connection
 
@@ -25,12 +24,10 @@ class OrdenDAO:
         
         with get_connection() as conn:
             with conn.cursor() as cur:
-                # 1. Insertar orden y obtener su ID entero generado
                 cur.execute(sql_orden, datos)
                 row = cur.fetchone()
                 id_orden_int = dict(row)["id_orden_int"] if row else None
                 
-                # 2. Insertar su estado inicial en el historial
                 if id_orden_int:
                     cur.execute(sql_historial, (id_orden_int,))
                     

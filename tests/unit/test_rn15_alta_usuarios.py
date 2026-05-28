@@ -18,6 +18,7 @@ class TestRN15AltaTecnicos:
         tecnico_service._usuario_dao.obtener_id_usuario_int.return_value = None
         tecnico_service._dao.existe_rfc.return_value = False
         tecnico_service._usuario_dao.insertar.return_value = 4
+        tecnico_service._usuario_dao.existe_correo.return_value = False
         tecnico_service._dao.insertar.return_value = True
 
         resultado = tecnico_service.alta_tecnico(
@@ -195,6 +196,8 @@ class TestBajaTecnico:
         }
         tecnico_service._dao.tiene_ordenes_activas.return_value = False
         tecnico_service._dao.actualizar.return_value = True
+        tecnico_service._dao.tiene_ordenes.return_value = False
+
 
         resultado = tecnico_service.baja_tecnico("TEC001")
 

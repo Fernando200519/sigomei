@@ -2,7 +2,6 @@ import pytest
 import subprocess
 import time
 import socket
-import Pyro5
 from Pyro5.api import Proxy
 from server.dao.db_connection import get_connection
 import sys
@@ -148,12 +147,47 @@ def rmi_registry():
 
 @pytest.fixture(scope="function")
 def db_test():
-    """Limpia las tablas antes de cada test para garantizar un ambiente aislado."""
+    """
+    Limpia datos de prueba, conserva catálogos y usuarios base,
+    y resincroniza las secuencias para evitar errores de duplicidad.
+    """
     with get_connection() as connection:
         with connection.cursor() as cursor:
+
+            cursor.execute("DELETE FROM historial_estados_orden")
             cursor.execute("DELETE FROM ordenes_mantenimiento")
-            cursor.execute("DELETE FROM tecnicos")
-            cursor.execute("DELETE FROM equipos")
-            cursor.execute("DELETE FROM usuarios")
+
+            cursor.execute("""
+                DELETE FROM tecnicos
+                WHERE id_tecnico NOT IN ('TEC-001', 'TEC-002')
+            """)
+
+            cursor.execute("""
+                DELETE FROM equipos
+                WHERE id_equipo NOT IN ('EQ-001', 'EQ-002', 'EQ-003', 'EQ-004', 'EQ-005')
+            """)
+
+            cursor.execute("DELETE FROM sesiones")
+
+            cursor.execute("""
+                DELETE FROM usuarios
+                WHERE id_usuario NOT IN ('ADM-001', 'COO-001', 'SUP-001', 'TEC-001', 'TEC-002')
+            """)
+
+
+            cursor.execute("""
+                SELECT setval(pg_get_serial_sequence('usuarios', 'id_usuario_int'), COALESCE(max(id_usuario_int), 1)) FROM usuarios;
+            """)
+            cursor.execute("""
+                SELECT setval(pg_get_serial_sequence('tecnicos', 'id_tecnico_int'), COALESCE(max(id_tecnico_int), 1)) FROM tecnicos;
+            """)
+            cursor.execute("""
+                SELECT setval(pg_get_serial_sequence('equipos', 'id_equipo_int'), COALESCE(max(id_equipo_int), 1)) FROM equipos;
+            """)
+            cursor.execute("""
+                SELECT setval(pg_get_serial_sequence('ordenes_mantenimiento', 'id_orden_int'), COALESCE(max(id_orden_int), 1)) FROM ordenes_mantenimiento;
+            """)
+
         connection.commit()
+
     yield

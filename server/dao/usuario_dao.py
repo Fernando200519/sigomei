@@ -2,6 +2,29 @@ from server.dao.db_connection import get_connection
 
 
 class UsuarioDAO:
+    def buscar_por_correo(self, correo: str) -> dict | None:
+        sql = """
+            SELECT
+                u.id_usuario_int,
+                u.id_usuario,
+                u.nombre_completo,
+                u.correo,
+                u.hash_contrasena,
+                u.estado,
+                u.id_rol,
+                r.nombre AS rol
+            FROM usuarios u
+            INNER JOIN roles r
+                ON r.id_rol = u.id_rol
+            WHERE u.correo = %s
+        """
+
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (correo,))
+                row = cur.fetchone()
+
+        return dict(row) if row else None
 
     def insertar(self, datos: dict) -> int:
         sql = """
