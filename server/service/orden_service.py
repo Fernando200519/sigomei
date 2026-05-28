@@ -14,10 +14,11 @@ from server.exceptions.exceptions import (
 NIVEL_NUM: dict[str, int] = {"I": 1, "II": 2, "III": 3}
 
 TRANSICIONES_VALIDAS: dict[str, list[str]] = {
-    "Programada":   ["En ejecucion", "Cancelada"],
-    "En ejecucion": ["Finalizada",   "Cancelada"],
-    "Finalizada":   [],
-    "Cancelada":    [],
+    "Programada":          ["En ejecucion", "Cancelada"],
+    "En ejecucion":        ["Finalizada",   "Cancelada"],
+    "Pendiente de cierre": ["Finalizada",   "Cancelada"],
+    "Finalizada":          [],
+    "Cancelada":           [],
 }
 
 ESTADOS_ACTIVOS = {"Programada", "En ejecucion"}

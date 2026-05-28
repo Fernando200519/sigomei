@@ -76,7 +76,7 @@ SERVER_OBJECT_ID=sigomei.controller
 
 PostgreSQL requiere que los datos y los scripts se manejen en UTF-8. Si estás en Windows, la consola suele usar cp1252 por defecto, lo que corromperá los caracteres acentuados (é, ó) y hará que fallen las reglas de negocio.
 
-### 3.2 Crear la base de datos
+### 3.1 Crear la base de datos
 
 Crea el contenedor de datos asegurando el encoding de forma explícita:
 
@@ -85,10 +85,10 @@ Crea el contenedor de datos asegurando el encoding de forma explícita:
 psql -U postgres -c "DROP DATABASE IF EXISTS sigomei_db;"
 
 # Crea la base de datos limpia
-psql -U postgres -c "CREATE DATABASE sigomei_db';"
+psql -U postgres -c "CREATE DATABASE sigomei_db;"
 ```
 
-### 3.3 Crear las tablas (Esquema)
+### 3.2 Crear las tablas (Esquema)
 
 Construye la estructura de tablas ejecutando el archivo DDL:
 
@@ -96,7 +96,7 @@ Construye la estructura de tablas ejecutando el archivo DDL:
 psql -U postgres -d sigomei_db -f database/schema.sql
 ```
 
-### 3.4 Cargar datos de prueba iniciales (Seeding)
+### 3.3 Cargar datos de prueba iniciales (Seeding)
 
 Inserta los registros ficticios para las pruebas del CRUD:
 
@@ -104,7 +104,7 @@ Inserta los registros ficticios para las pruebas del CRUD:
 psql -U postgres -d sigomei_db -f database/seed.sql
 ```
 
-### 3.5 Verificar la configuración
+### 3.4 Verificar la configuración
 
 Ejecuta una consulta rápida para confirmar que los datos se importaron sin corromperse:
 

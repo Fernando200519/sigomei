@@ -38,15 +38,20 @@ class IniciarEjecucionDialog(QDialog):
 
     def _on_aceptar_clicked(self):
         fecha_inicio_str = self.date_edit.date().toString("yyyy-MM-dd")
+        
+        # Recuperamos el token almacenado en la ventana principal
+        token = getattr(self.main_window, 'token', '')
 
         try:
-            exito = self.main_window.proxy.iniciar_ejecucion(self.id_orden, fecha_inicio_str)
+            # Ahora enviamos el token como primer argumento, tal como lo exige el servidor
+            exito = self.main_window.proxy.iniciar_ejecucion(token, self.id_orden, fecha_inicio_str)
             if exito:
                 QMessageBox.information(
                     self, "Éxito", f"La orden {self.id_orden} ahora está 'En ejecucion'."
                 )
                 self.accept()
         except PermissionError as e:
+            # Aquí se capturan errores de RN-08 (transiciones inválidas)
             QMessageBox.warning(self, "Regla de Negocio Denegada", str(e))
         except Exception as e:
             QMessageBox.critical(self, "Error de Red", f"No se pudo iniciar la orden:\n{e}")

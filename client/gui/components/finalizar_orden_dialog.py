@@ -1,5 +1,8 @@
-from PyQt6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QDateEdit, QDoubleSpinBox, QPushButton, QMessageBox
-from PyQt6.QtCore import QDate
+from PyQt6.QtWidgets import (
+    QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
+    QDateEdit, QDoubleSpinBox, QPushButton, QMessageBox
+)
+from PyQt6.QtCore import QDate, Qt
 
 class FinalizarOrdenDialog(QDialog):
     def __init__(self, id_orden, main_window):
@@ -8,33 +11,42 @@ class FinalizarOrdenDialog(QDialog):
         self.main_window = main_window
         
         self.setWindowTitle("Finalizar Orden de Mantenimiento")
-        self.resize(340, 190)
+        self.setMinimumWidth(350)
         self.init_ui()
 
     def init_ui(self):
         layout = QVBoxLayout()
+        layout.setSpacing(12)
 
         lbl_info = QLabel(f"Cierre definitivo de la orden: <b>{self.id_orden}</b>")
+        lbl_info.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(lbl_info)
 
+        # Campos
         layout.addWidget(QLabel("Fecha de Cierre:"))
         self.date_edit = QDateEdit()
         self.date_edit.setCalendarPopup(True)
         self.date_edit.setDate(QDate.currentDate())
+        self.date_edit.setStyleSheet("padding: 4px; border: 1px solid #CFD8DC; border-radius: 4px;")
         layout.addWidget(self.date_edit)
 
         layout.addWidget(QLabel("Costo Real ($):"))
         self.spin_costo = QDoubleSpinBox()
         self.spin_costo.setRange(0.0, 99999999.99)
         self.spin_costo.setDecimals(2)
+        self.spin_costo.setPrefix("$ ")
+        self.spin_costo.setStyleSheet("padding: 4px; border: 1px solid #CFD8DC; border-radius: 4px;")
         layout.addWidget(self.spin_costo)
 
+        # Botonera
         btn_layout = QHBoxLayout()
         self.btn_aceptar = QPushButton("Finalizar Orden")
-        self.btn_cancelar = QPushButton("Cancelar")
-        
         self.btn_aceptar.clicked.connect(self._on_aceptar_clicked)
+        self.btn_aceptar.setStyleSheet("background-color: #2E7D32; color: white; font-weight: bold; padding: 5px;")
+        
+        self.btn_cancelar = QPushButton("Cancelar")
         self.btn_cancelar.clicked.connect(self.reject)
+        self.btn_cancelar.setStyleSheet("padding: 5px;")
         
         btn_layout.addWidget(self.btn_aceptar)
         btn_layout.addWidget(self.btn_cancelar)
@@ -50,8 +62,12 @@ class FinalizarOrdenDialog(QDialog):
             QMessageBox.warning(self, "Validación", "El costo real debe ser un monto mayor a cero.")
             return
 
+        # CORRECCIÓN: Recuperar el token de la sesión activa
+        token = getattr(self.main_window, 'token', '')
+
         try:
-            exito = self.main_window.proxy.finalizar_orden(self.id_orden, fecha_cierre_str, costo_real)
+            # CORRECCIÓN: Pasar el 'token' como primer parámetro obligatorio
+            exito = self.main_window.proxy.finalizar_orden(token, self.id_orden, fecha_cierre_str, costo_real)
             if exito:
                 QMessageBox.information(
                     self, "Éxito", f"La orden {self.id_orden} ha sido cerrada y guardada con éxito."

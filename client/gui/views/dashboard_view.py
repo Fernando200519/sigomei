@@ -25,3 +25,26 @@ class DashboardView(QWidget):
 
         layout.addWidget(self.tabs)
         self.setLayout(layout)
+
+    def inicializar_vistas(self):
+        """
+        Orquesta la configuración de permisos y la carga de datos remotos 
+        en todas las sub-vistas una vez que el token y el rol están listos.
+        """
+        # --- Configuración de pestaña: Equipos ---
+        if hasattr(self.equipos_view, 'verificar_permisos_ui'):
+            self.equipos_view.verificar_permisos_ui()
+        if hasattr(self.equipos_view, 'cargar_equipos'):
+            self.equipos_view.cargar_equipos()
+            
+        # --- Configuración de pestaña: Órdenes ---
+        if hasattr(self.ordenes_view, 'verificar_permisos_ui'):
+            self.ordenes_view.verificar_permisos_ui()
+        if hasattr(self.ordenes_view, 'cargar_ordenes'):
+            self.ordenes_view.cargar_ordenes()
+            
+        # --- Configuración de pestaña: Técnicos ---
+        if hasattr(self.tecnicos_view, 'verificar_permisos_ui'):
+            self.tecnicos_view.verificar_permisos_ui()
+        if hasattr(self.tecnicos_view, 'cargar_tecnicos'):
+            self.tecnicos_view.cargar_tecnicos()

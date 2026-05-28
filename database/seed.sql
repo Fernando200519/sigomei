@@ -52,3 +52,7 @@ INSERT INTO historial_estados_orden (id_orden_int, id_estado_orden, fecha_hora_i
     (4, 2, '2025-04-28 10:00:00', '2025-04-28 14:00:00'),
     (4, 3, '2025-04-28 14:00:00', NULL),
     (5, 1, '2025-05-15 08:00:00', NULL);
+
+SELECT setval('equipos_id_equipo_int_seq', (SELECT MAX(id_equipo_int) FROM equipos));
+SELECT setval('ordenes_mantenimiento_id_orden_int_seq', (SELECT MAX(id_orden_int) FROM ordenes_mantenimiento));
+SELECT setval('usuarios_id_usuario_int_seq', (SELECT MAX(id_usuario_int) FROM usuarios));

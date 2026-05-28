@@ -56,11 +56,7 @@ class UsuarioDAO:
                 cur.execute(sql, datos)
                 return cur.fetchone()["id_usuario_int"]
 
-    def buscar_por_id(
-        self,
-        id_usuario: str
-    ) -> dict:
-
+    def buscar_por_id(self, id_usuario: str) -> dict | None:
         sql = """
             SELECT
                 u.id_usuario,
@@ -80,13 +76,12 @@ class UsuarioDAO:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (id_usuario,))
-                return cur.fetchone()
+                row = cur.fetchone()
+                
+        # CORRECCIÓN: Convertir el RealDictRow de psycopg2 a un diccionario plano
+        return dict(row) if row else None
 
-    def obtener_id_usuario_int(
-        self,
-        id_usuario: str
-    ) -> int | None:
-
+    def obtener_id_usuario_int(self, id_usuario: str) -> int | None:
         sql = """
             SELECT id_usuario_int
             FROM usuarios
@@ -99,11 +94,7 @@ class UsuarioDAO:
                 row = cur.fetchone()
                 return row["id_usuario_int"] if row else None
 
-    def existe_rfc(
-        self,
-        rfc: str
-    ) -> bool:
-
+    def existe_rfc(self, rfc: str) -> bool:
         sql = """
             SELECT 1
             FROM usuarios
@@ -115,11 +106,7 @@ class UsuarioDAO:
                 cur.execute(sql, (rfc,))
                 return cur.fetchone() is not None
 
-    def existe_correo(
-        self,
-        correo: str
-    ) -> bool:
-
+    def existe_correo(self, correo: str) -> bool:
         sql = """
             SELECT 1
             FROM usuarios
@@ -131,12 +118,7 @@ class UsuarioDAO:
                 cur.execute(sql, (correo,))
                 return cur.fetchone() is not None
 
-    def actualizar(
-        self,
-        id_usuario: str,
-        datos_actualizados: dict
-    ) -> bool:
-
+    def actualizar(self, id_usuario: str, datos_actualizados: dict) -> bool:
         campos = []
         valores = []
 
@@ -160,10 +142,7 @@ class UsuarioDAO:
 
         return True
 
-    def listar_todos(
-        self
-    ) -> list:
-
+    def listar_todos(self) -> list:
         sql = """
             SELECT
                 u.id_usuario,
@@ -182,4 +161,7 @@ class UsuarioDAO:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql)
-                return cur.fetchall()
+                registros = cur.fetchall()
+                
+                # CORRECCIÓN CRÍTICA: Mapear la lista de RealDictRows a diccionarios puros de Python
+                return [dict(fila) for fila in registros]

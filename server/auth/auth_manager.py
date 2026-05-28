@@ -15,6 +15,7 @@ class AuthManager:
     ROL_TECNICO = 4
 
     ROLES_SUPERVISION = {
+        ROL_ADMINISTRADOR,
         ROL_COORDINADOR,
         ROL_SUPERVISOR
     }

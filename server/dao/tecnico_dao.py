@@ -27,9 +27,14 @@ class TecnicoDAO:
         return dict(row)['id_tecnico_int'] if row else None
     
     def buscar_por_id(self, id_tecnico_int: int) -> dict | None:
-        """Busca un técnico por su ID interno e incluye sus datos de usuario."""
+        """Busca un técnico por su ID interno e incluye todos sus datos de usuario de forma íntegra."""
         sql = """
-            SELECT t.*, u.nombre_completo, u.estado AS estatus
+            SELECT t.*, 
+                   u.nombre_completo, 
+                   u.rfc, 
+                   u.telefono, 
+                   u.correo, 
+                   u.estado AS estatus
             FROM tecnicos t
             JOIN usuarios u ON t.id_tecnico_int = u.id_usuario_int
             WHERE t.id_tecnico_int = %s
@@ -118,12 +123,13 @@ class TecnicoDAO:
                 return cur.fetchone() is not None
     
     def listar_todos(self) -> list:
-        """Consulta la base de datos y devuelve todos los técnicos con sus nombres y estados."""
+        """Consulta la base de datos y devuelve solo los técnicos que permanezcan activos."""
         sql = """
             SELECT t.id_tecnico_int, t.id_tecnico, u.nombre_completo, 
                    t.especialidad, t.nivel_certificacion, u.estado AS estatus 
             FROM tecnicos t
-            JOIN usuarios u ON t.id_tecnico_int = u.id_usuario_int;
+            JOIN usuarios u ON t.id_tecnico_int = u.id_usuario_int
+            WHERE u.estado = 'Activo';
         """
         with get_connection() as conn:
             with conn.cursor() as cur:
@@ -140,11 +146,17 @@ class TecnicoDAO:
             "estatus": "u.estado = %(estatus)s"
         }
         
-        condiciones = []
+        # CORRECCIÓN CRÍTICA: La consulta ahora exige por defecto que el usuario esté 'Activo'
+        # para que los técnicos dados de baja lógica no reaparezcan al refrescar o filtrar.
+        condiciones = ["u.estado = 'Activo'"]
         parametros = {}
 
         for campo, valor in filtros.items():
-            if campo in mapeo_columnas and valor:
+            # Si el usuario explícitamente busca por un estatus en el combo box, sobreescribimos la condición
+            if campo == "estatus" and valor and valor != "Todos":
+                condiciones[0] = "u.estado = %(estatus)s"
+                parametros["estatus"] = valor
+            elif campo in mapeo_columnas and valor:
                 condiciones.append(mapeo_columnas[campo])
                 parametros[campo] = valor
 
@@ -155,9 +167,8 @@ class TecnicoDAO:
             JOIN usuarios u ON t.id_tecnico_int = u.id_usuario_int
         """
 
-        if condiciones:
-            sql += " WHERE " + " AND ".join(condiciones)
-
+        # Como condiciones ya tiene al menos ["u.estado = 'Activo'"], siempre se agregará el WHERE
+        sql += " WHERE " + " AND ".join(condiciones)
         sql += " ORDER BY u.nombre_completo ASC;"
 
         with get_connection() as conn:

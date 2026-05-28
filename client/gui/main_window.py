@@ -1,6 +1,6 @@
 import sys
 import Pyro5.errors
-from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedWidget, QMessageBox, QWidget, QLabel, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedWidget, QMessageBox
 
 from client.gui.views.login_view import LoginView
 from client.gui.views.dashboard_view import DashboardView
@@ -11,11 +11,12 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("SIGOMEI — Panel de Control")
-        self.resize(900, 600)
+        self.resize(1024, 700)
 
         try:
             self.proxy = SigomeiProxy()
-            self.sesion_token = None 
+            self.token = None
+            self.id_rol = None
         except Exception as e:
             QMessageBox.critical(self, "Error de Configuración", f"No se pudo inicializar el proxy: {e}")
             sys.exit(1)
@@ -31,19 +32,25 @@ class MainWindow(QMainWindow):
 
         self.login_view.login_attempted.connect(self.handle_login)
 
-    def handle_login(self, username, password):
-        """Maneja la lógica de comunicación con el servidor remoto."""
-        if not username or not password:
-            QMessageBox.warning(self, "Campos Vacíos", "Por favor introduce un usuario y contraseña.")
+    def handle_login(self, correo, password):
+        """Maneja la lógica de comunicación y autenticación con el servidor remoto."""
+        if not correo or not password:
+            QMessageBox.warning(self, "Campos Vacíos", "Por favor introduce tu correo y contraseña.")
             return
 
         try:
-            token = self.proxy.login(username, password)
-            self.sesion_token = token
+            token = self.proxy.login(correo, password)
+            self.token = token
+            
+            try:
+                self.proxy.listar_usuarios(self.token)
+                self.id_rol = 3
+            except PermissionError:
+                self.id_rol = 4
             
             QMessageBox.information(self, "Acceso Autorizado", "Sesión iniciada correctamente.")
-            
-            self.dashboard_view.ordenes_view.cargar_ordenes()
+
+            self.dashboard_view.inicializar_vistas()
             
             self.stacked_widget.setCurrentIndex(1)
             
@@ -55,7 +62,7 @@ class MainWindow(QMainWindow):
                 self, 
                 "Error de Red", 
                 "No se pudo establecer conexión con el servidor SIGOMEI.\n"
-                "Verifica que el servicio esté encendido e intenta de nuevo."
+                "Verifica que el servicio del Backend Docker/Pyro5 esté encendido."
             )
             
         except Exception as e:
